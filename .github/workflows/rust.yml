@@ -43,11 +43,10 @@ jobs:
       - name: Add rustup components
         run: rustup component add rustfmt clippy
 
-      - name: Install LLVM 7
+      - name: Install LLVM
         if: contains(matrix.os, 'ubuntu')
         run: | 
-            sudo apt-get install llvm-7
-            sudo ln -s /usr/bin/llvm-config-7 /usr/local/bin/llvm-config
+          apt-get install libllvm-18-ocaml-dev libllvm18 llvm-18 llvm-18-dev llvm-18-doc llvm-18-examples llvm-18-runtime
 
       - name: Load Rust Cache
         uses: Swatinem/rust-cache@v1
