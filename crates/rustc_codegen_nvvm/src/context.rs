@@ -12,7 +12,7 @@ use rustc_middle::dep_graph::DepContext;
 use rustc_middle::ty::layout::{
     FnAbiError, FnAbiOf, FnAbiRequest, HasTyCtxt, LayoutError, TyAndLayout,
 };
-use rustc_middle::ty::layout::{FnAbiOfHelpers, LayoutOfHelpers};
+use rustc_middle::ty::layout::{FnAbiOfHelpers, LayoutOfHelpers, HasTypingEnv,};
 use rustc_middle::ty::Ty;
 use rustc_middle::{bug, span_bug, ty};
 use rustc_middle::{
@@ -247,20 +247,20 @@ impl<'ll, 'tcx> MiscMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         );
     }
 
-    fn declare_c_main(&self, _fn_type: Self::Type) -> Option<Self::Function> {
+    fn declare_c_main(&self, _fn_type: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Type) -> Option<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function> {
         // no point for gpu kernels
         None
     }
 
-    fn apply_target_cpu_attr(&self, _llfn: Self::Function) {
+    fn apply_target_cpu_attr(&self, _llfn: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function) {
         // no point if we are running on the gpu ;)
     }
 
-    fn compiler_used_statics(&self) -> &RefCell<Vec<Self::Value>> {
+    fn compiler_used_statics(&self) -> &RefCell<Vec<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value>> {
         &self.compiler_used_statics
     }
 
-    fn set_frame_pointer_type(&self, _llfn: Self::Function) {}
+    fn set_frame_pointer_type(&self, _llfn: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function) {}
 }
 
 impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
@@ -566,6 +566,7 @@ impl<'ll, 'tcx> BackendTypes for CodegenCx<'ll, 'tcx> {
     type DIScope = &'ll llvm::DIScope;
     type DILocation = &'ll llvm::DILocation;
     type DIVariable = &'ll llvm::DIVariable;
+    type Metadata = &'ll llvm::Metadata;
 }
 
 impl<'ll, 'tcx> HasDataLayout for CodegenCx<'ll, 'tcx> {
@@ -583,6 +584,12 @@ impl<'ll, 'tcx> HasTargetSpec for CodegenCx<'ll, 'tcx> {
 impl<'ll, 'tcx> ty::layout::HasTyCtxt<'tcx> for CodegenCx<'ll, 'tcx> {
     fn tcx(&self) -> TyCtxt<'tcx> {
         self.tcx
+    }
+}
+
+impl<'ll, 'tcx> HasTypingEnv<'tcx> for CodegenCx<'ll, 'tcx> {
+    fn typing_env(&self) -> TypingEnv<'tcx> {
+        todo!()
     }
 }
 
