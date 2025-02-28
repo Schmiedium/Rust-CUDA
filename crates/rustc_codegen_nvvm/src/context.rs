@@ -4,16 +4,16 @@ use crate::debug_info::{self, compile_unit_metadata, CrateDebugContext};
 use crate::llvm::{self, BasicBlock, Type, Value};
 use crate::{target, LlvmMod};
 use nvvm::NvvmOption;
-use rustc_codegen_ssa::traits::{BackendTypes, BaseTypeMethods, CoverageInfoMethods, MiscMethods};
-use rustc_codegen_ssa::traits::{ConstMethods, DerivedTypeMethods};
+use rustc_codegen_ssa::traits::{BackendTypes, BaseTypeCodegenMethods, MiscCodegenMethods};
+use rustc_codegen_ssa::traits::DerivedTypeCodegenMethods;
 use rustc_data_structures::base_n;
 use rustc_hash::FxHashMap;
 use rustc_middle::dep_graph::DepContext;
 use rustc_middle::ty::layout::{
-    FnAbiError, FnAbiOf, FnAbiRequest, HasParamEnv, HasTyCtxt, LayoutError, TyAndLayout,
+    FnAbiError, FnAbiOf, FnAbiRequest, HasTyCtxt, LayoutError, TyAndLayout,
 };
 use rustc_middle::ty::layout::{FnAbiOfHelpers, LayoutOfHelpers};
-use rustc_middle::ty::{Ty, TypeFoldable};
+use rustc_middle::ty::Ty;
 use rustc_middle::{bug, span_bug, ty};
 use rustc_middle::{
     mir::mono::CodegenUnit,
@@ -654,7 +654,7 @@ impl<'ll, 'tcx> CoverageInfoMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         todo!()
     }
 
-    fn get_pgo_func_name_var(&self, _instance: Instance<'tcx>) -> Self::Value {
+    fn get_pgo_func_name_var(&self, _instance: Instance<'tcx>) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
         todo!()
     }
 }

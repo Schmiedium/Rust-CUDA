@@ -3,7 +3,7 @@ use crate::override_fns::define_or_override_fn;
 use crate::{builder::Builder, context::CodegenCx, lto::ThinBuffer, LlvmMod, NvvmCodegenBackend};
 use libc::{c_char, size_t};
 use rustc_codegen_ssa::back::write::{TargetMachineFactoryConfig, TargetMachineFactoryFn};
-use rustc_codegen_ssa::traits::{DebugInfoMethods, MiscMethods};
+use rustc_codegen_ssa::traits::{DebugInfoCodegenMethods, MiscCodegenMethods};
 use rustc_codegen_ssa::{
     back::write::{CodegenContext, ModuleConfig},
     base::maybe_create_entry_wrapper,
@@ -12,7 +12,7 @@ use rustc_codegen_ssa::{
     CompiledModule, ModuleCodegen, ModuleKind,
 };
 use rustc_data_structures::small_c_str::SmallCStr;
-use rustc_errors::{FatalError, Handler};
+use rustc_errors::FatalError;
 use rustc_fs_util::path_to_c_string;
 use rustc_middle::bug;
 use rustc_middle::mir::mono::MonoItem;

@@ -5,7 +5,7 @@ use libc::c_uint;
 use rustc_ast::Mutability;
 use rustc_codegen_ssa::{
     mir::place::PlaceRef,
-    traits::{BaseTypeMethods, ConstMethods, DerivedTypeMethods, MiscMethods, StaticMethods},
+    traits::{BaseTypeCodegenMethods, ConstCodegenMethods, MiscCodegenMethods, StaticCodegenMethods},
 };
 use rustc_middle::mir::interpret::{Allocation, GlobalAlloc, Scalar};
 use rustc_middle::ty::layout::LayoutOf;

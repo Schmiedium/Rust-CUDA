@@ -3,7 +3,6 @@
 // make our lives a lot easier for llvm ffi with this. And since rustc's core infra
 // relies on it its almost guaranteed to not be removed/broken
 #![feature(extern_types)]
-#![feature(backtrace)]
 
 extern crate rustc_arena;
 extern crate rustc_ast;
@@ -54,20 +53,21 @@ use lto::ThinBuffer;
 use rustc_codegen_ssa::{
     back::{
         lto::{LtoModuleCodegen, SerializedModule, ThinModule},
-        write::{CodegenContext, FatLTOInput, ModuleConfig, OngoingCodegen},
+        write::{CodegenContext, ModuleConfig, OngoingCodegen},
     },
     traits::{CodegenBackend, ExtraBackendMethods, WriteBackendMethods},
     CodegenResults, CompiledModule, ModuleCodegen,
 };
-use rustc_errors::{ErrorReported, FatalError, Handler};
+use rustc_errors::FatalError;
 use rustc_hash::FxHashMap;
 use rustc_metadata::EncodedMetadata;
-use rustc_middle::ty::query;
+use rustc_middle::query;
 use rustc_middle::{
     dep_graph::{WorkProduct, WorkProductId},
     ty::TyCtxt,
+    util::Providers,
 };
-use rustc_session::{cstore::MetadataLoaderDyn, Session};
+use rustc_session::Session;
 use tracing::debug;
 
 use std::ffi::CString;
@@ -100,7 +100,7 @@ impl CodegenBackend for NvvmCodegenBackend {
         Box::new(link::NvvmMetadataLoader)
     }
 
-    fn provide(&self, providers: &mut query::Providers) {
+    fn provide(&self, providers: &mut rustc_middle::util::Providers) {
         providers.fn_abi_of_fn_ptr = |tcx, key| {
             let result = (rustc_interface::DEFAULT_QUERY_PROVIDERS.fn_abi_of_fn_ptr)(tcx, key);
             Ok(readjust_fn_abi(tcx, result?))
@@ -158,6 +158,7 @@ impl CodegenBackend for NvvmCodegenBackend {
         );
         Ok(())
     }
+    fn locale_resource(&self) -> &'static str { todo!() }
 }
 
 impl WriteBackendMethods for NvvmCodegenBackend {
@@ -212,7 +213,7 @@ impl WriteBackendMethods for NvvmCodegenBackend {
 
     unsafe fn optimize_thin(
         cgcx: &CodegenContext<Self>,
-        thin_module: &mut ThinModule<Self>,
+        thin_module: ThinModule<Self>,
     ) -> Result<ModuleCodegen<Self::Module>, FatalError> {
         lto::optimize_thin(cgcx, thin_module)
     }
@@ -254,6 +255,7 @@ impl WriteBackendMethods for NvvmCodegenBackend {
     ) -> Result<(), FatalError> {
         todo!()
     }
+    fn print_statistics(&self) { todo!() }
 }
 
 impl ExtraBackendMethods for NvvmCodegenBackend {

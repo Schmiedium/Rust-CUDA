@@ -12,7 +12,7 @@ use rustc_codegen_ssa::traits::*;
 use rustc_codegen_ssa::MemFlags;
 use rustc_hir::def_id::DefId;
 use rustc_middle::ty::layout::{
-    FnAbiError, FnAbiOfHelpers, FnAbiRequest, LayoutError, LayoutOfHelpers, TyAndLayout,
+    FnAbiError, FnAbiOfHelpers, FnAbiRequest, LayoutError, LayoutOfHelpers, TyAndLayout, HasTypingEnv,
 };
 use rustc_middle::ty::{self, Ty, TyCtxt};
 use rustc_span::Span;
@@ -61,6 +61,7 @@ impl<'ll, 'tcx> BackendTypes for Builder<'_, 'll, 'tcx> {
     type DIScope = <CodegenCx<'ll, 'tcx> as BackendTypes>::DIScope;
     type DILocation = <CodegenCx<'ll, 'tcx> as BackendTypes>::DILocation;
     type DIVariable = <CodegenCx<'ll, 'tcx> as BackendTypes>::DIVariable;
+    type Metadata = <CodegenCx<'ll, 'tcx> as BackendTypes>::Metadata;
 }
 
 impl abi::HasDataLayout for Builder<'_, '_, '_> {
@@ -84,6 +85,12 @@ impl<'tcx> ty::layout::HasParamEnv<'tcx> for Builder<'_, '_, 'tcx> {
 impl<'tcx> HasTargetSpec for Builder<'_, '_, 'tcx> {
     fn target_spec(&self) -> &Target {
         self.cx.target_spec()
+    }
+}
+
+impl<'tcx> HasTypingEnv<'tcx> for Builder<'_, '_, 'tcx> {
+    fn typing_env(&self) -> TypingEnv<'tcx> {
+        todo!()
     }
 }
 
@@ -171,6 +178,8 @@ impl<'a, 'll, 'tcx> CoverageInfoBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> 
     ) -> bool {
         todo!()
     }
+
+    fn add_coverage(&mut self, _: Instance<'tcx>, _: &CoverageKind) { todo!() }
 }
 
 impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
@@ -444,14 +453,14 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         val
     }
 
-    fn alloca(&mut self, ty: &'ll Type, align: Align) -> &'ll Value {
+    fn alloca(&mut self, ty: Size, align: Align) -> &'ll Value {
         trace!("Alloca `{:?}`", ty);
         let mut bx = Builder::with_cx(self.cx);
         bx.position_at_start(unsafe { llvm::LLVMGetFirstBasicBlock(self.llfn()) });
         bx.dynamic_alloca(ty, align)
     }
 
-    fn dynamic_alloca(&mut self, ty: &'ll Type, align: Align) -> &'ll Value {
+    fn dynamic_alloca(&mut self, ty: &'ll Value, align: Align) -> &'ll Value {
         trace!("Dynamic Alloca `{:?}`", ty);
         unsafe {
             let alloca = llvm::LLVMBuildAlloca(self.llbuilder, ty, unnamed());
@@ -528,12 +537,12 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
             scalar: &abi::Scalar,
         ) {
             match scalar.value {
-                abi::Int(..) => {
+                rustc_target::abi::Primitive::Int(..) => {
                     if !scalar.is_always_valid(bx) {
                         bx.range_metadata(load, scalar.valid_range);
                     }
                 }
-                abi::Pointer if !scalar.valid_range.contains(0) => {
+                rustc_target::abi::Primitive::Pointer if !scalar.valid_range.contains(0) => {
                     bx.nonnull_metadata(load);
                 }
                 _ => {}
@@ -589,11 +598,11 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
     }
 
     fn write_operand_repeatedly(
-        mut self,
+        &mut self,
         cg_elem: OperandRef<'tcx, &'ll Value>,
         count: u64,
         dest: PlaceRef<'tcx, &'ll Value>,
-    ) -> Self {
+    ) -> () {
         trace!("write operand repeatedly");
         let zero = self.const_usize(0);
         let count = self.const_usize(count);
@@ -625,8 +634,7 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         );
         body_bx.br(header_bx.llbb());
         header_bx.add_incoming_to_phi(current, next, body_bx.llbb());
-
-        next_bx
+        
     }
 
     fn range_metadata(&mut self, load: &'ll Value, range: WrappingRange) {
@@ -773,11 +781,11 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         unsafe { llvm::LLVMBuildSExt(self.llbuilder, val, dest_ty, unnamed()) }
     }
 
-    fn fptoui_sat(&mut self, _val: &'ll Value, _dest_ty: &'ll Type) -> Option<&'ll Value> {
+    fn fptoui_sat(&mut self, _val: &'ll Value, _dest_ty: &'ll Type) -> &'ll Value {
         None
     }
 
-    fn fptosi_sat(&mut self, _val: &'ll Value, _dest_ty: &'ll Type) -> Option<&'ll Value> {
+    fn fptosi_sat(&mut self, _val: &'ll Value, _dest_ty: &'ll Type) -> &'ll Value {
         None
     }
 
@@ -1001,15 +1009,15 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
 
     fn set_cleanup(&mut self, _landing_pad: &'ll Value) {}
 
-    fn resume(&mut self, _exn: &'ll Value) -> &'ll Value {
+    fn resume(&mut self, _exn: &'ll Value, _exn2: &'ll Value) -> () {
         self.unsupported("resumes");
     }
 
     fn cleanup_pad(&mut self, _parent: Option<&'ll Value>, _args: &[&'ll Value]) {}
 
-    fn cleanup_ret(&mut self, _funclet: &(), _unwind: Option<&'ll BasicBlock>) -> &'ll Value {
+    fn cleanup_ret(&mut self, _funclet: &(), _unwind: Option<&'ll BasicBlock>) -> () {
         // rustc doesnt actually use this value ;)
-        self.const_bool(false)
+        ()
     }
 
     fn catch_pad(&mut self, _parent: &'ll Value, _args: &[&'ll Value]) {}
@@ -1018,7 +1026,7 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         &mut self,
         _parent: Option<&'ll Value>,
         _unwind: Option<&'ll BasicBlock>,
-        _num_handlers: usize,
+        _num_handlers: &[&'ll llvm::BasicBlock],
     ) -> &'ll Value {
         self.unsupported("catch switches");
     }
@@ -1038,7 +1046,7 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         _order: rustc_codegen_ssa::common::AtomicOrdering,
         _failure_order: rustc_codegen_ssa::common::AtomicOrdering,
         _weak: bool,
-    ) -> &'ll Value {
+    ) -> (&'ll Value, &'ll Value) {
         // allowed but only for some things and with restrictions
         // https://docs.nvidia.com/cuda/nvvm-ir-spec/index.html#cmpxchg-instruction
         self.fatal("atomic cmpxchg is not supported")

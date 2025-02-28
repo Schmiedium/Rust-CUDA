@@ -9,8 +9,7 @@ use rustc_middle::mir::{Body, SourceScope};
 use rustc_middle::ty::{self, Instance};
 use rustc_session::config::DebugInfo;
 
-use rustc_index::bit_set::BitSet;
-use rustc_index::vec::Idx;
+use rustc_index::Idx;
 
 use super::metadata::file_metadata;
 use super::util::DIB;

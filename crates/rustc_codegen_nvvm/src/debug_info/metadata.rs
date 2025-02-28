@@ -6,19 +6,18 @@ use rustc_data_structures::fx::FxHashMap;
 use rustc_data_structures::stable_hasher::{HashStable, StableHasher};
 use rustc_hir::def::CtorKind;
 use rustc_hir::def_id::{DefId, LOCAL_CRATE};
-use rustc_index::vec::{Idx, IndexVec};
-use rustc_middle::mir::{self, GeneratorLayout};
+use rustc_index::{Idx, IndexVec};
+use rustc_middle::mir::{self};
 use rustc_middle::ty::layout::{self, IntegerExt, LayoutOf, PrimitiveExt, TyAndLayout};
-use rustc_middle::ty::subst::GenericArgKind;
+use rustc_middle::ty::GenericArgKind;
 use rustc_middle::ty::Instance;
-use rustc_middle::ty::{self, AdtKind, GeneratorSubsts, ParamEnv, Ty, TyCtxt};
+use rustc_middle::ty::{self, AdtKind, ParamEnv, Ty, TyCtxt};
 use rustc_middle::{bug, span_bug};
-use rustc_query_system::ich::NodeIdHashingMode;
 use rustc_session::config::{self, DebugInfo};
 use rustc_span::symbol::Symbol;
 use rustc_span::{self, SourceFile, SourceFileHash, Span};
 use rustc_span::{FileNameDisplayPreference, DUMMY_SP};
-use rustc_target::abi::{Abi, Align, HasDataLayout, Integer, TagEncoding};
+use rustc_target::abi::{Align, HasDataLayout, Integer, TagEncoding};
 use rustc_target::abi::{
     Primitive::{self, *},
     Size, VariantIdx, Variants,

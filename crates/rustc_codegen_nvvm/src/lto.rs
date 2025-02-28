@@ -7,7 +7,7 @@ use rustc_codegen_ssa::{
     traits::{ModuleBufferMethods, ThinBufferMethods},
     ModuleCodegen, ModuleKind,
 };
-use rustc_errors::{FatalError, Handler};
+use rustc_errors::FatalError;
 use rustc_middle::dep_graph::WorkProduct;
 use std::{
     ffi::{CStr, CString},
@@ -72,6 +72,10 @@ impl ThinBufferMethods for ThinBuffer {
 
             std::slice::from_raw_parts(ptr, len)
         }
+    }
+
+    fn thin_link_data(&self) -> &[u8] {
+        todo!()
     }
 }
 

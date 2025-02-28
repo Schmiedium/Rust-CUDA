@@ -4,7 +4,7 @@ use crate::debug_info;
 use crate::llvm::{self, Bool, True, Type, Value};
 use libc::{c_char, c_uint};
 use rustc_codegen_ssa::traits::{
-    BaseTypeMethods, ConstMethods, DerivedTypeMethods, MiscMethods, StaticMethods,
+    BaseTypeCodegenMethods, ConstCodegenMethods, DerivedTypeCodegenMethods, MiscCodegenMethods, StaticCodegenMethods,
 };
 use rustc_hir::def_id::DefId;
 use rustc_middle::mir::interpret::{
@@ -206,6 +206,7 @@ pub(crate) fn linkage_to_llvm(linkage: Linkage) -> llvm::Linkage {
         Linkage::Common => llvm::Linkage::CommonLinkage,
     }
 }
+
 
 fn check_and_apply_linkage<'ll, 'tcx>(
     cx: &CodegenCx<'ll, 'tcx>,

@@ -1,12 +1,11 @@
 use rustc_codegen_ssa::CodegenResults;
 use rustc_codegen_ssa::CompiledModule;
 use rustc_codegen_ssa::NativeLib;
-use rustc_data_structures::owning_ref::OwningRef;
 use rustc_data_structures::rustc_erase_owner;
-use rustc_data_structures::sync::MetadataRef;
+// use rustc_data_structures::sync::MetadataRef;
 use rustc_hash::FxHashSet;
 use rustc_middle::middle::dependency_format::Linkage;
-use rustc_session::cstore::MetadataLoader;
+// use rustc_session::cstore::MetadataLoader;
 use rustc_session::output::out_filename;
 use rustc_session::{
     config::{CrateType, OutputFilenames, OutputType},
