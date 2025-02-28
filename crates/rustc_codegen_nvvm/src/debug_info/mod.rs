@@ -168,6 +168,9 @@ impl<'a, 'll, 'tcx> DebugInfoBuilderMethods for Builder<'a, 'll, 'tcx> {
             llvm::set_value_name(value, name.as_bytes());
         }
     }
+
+    fn clear_dbg_loc(&mut self) { todo!() }
+    fn get_dbg_loc(&self) -> Option<&'ll DILocation> { todo!() }
 }
 
 /// A source code location used to generate debug information.
@@ -450,10 +453,10 @@ impl<'ll, 'tcx> DebugInfoMethods<'tcx> for CodegenCx<'ll, 'tcx> {
 
     fn dbg_loc(
         &self,
-        scope: Self::DIScope,
-        inlined_at: Option<Self::DILocation>,
+        scope: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DIScope,
+        inlined_at: Option<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DILocation>,
         span: Span,
-    ) -> Self::DILocation {
+    ) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DILocation {
         let DebugLoc { line, col, .. } = self.lookup_debug_loc(span.lo());
 
         unsafe { llvm::LLVMRustDIBuilderCreateDebugLocation(line, col, scope, inlined_at) }
@@ -463,16 +466,16 @@ impl<'ll, 'tcx> DebugInfoMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         &self,
         ty: Ty<'tcx>,
         _: Option<Binder<'tcx, ExistentialTraitRef<'tcx>>>,
-        vtable: Self::Value,
+        vtable: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value,
     ) {
         metadata::create_vtable_metadata(self, ty, vtable)
     }
 
     fn extend_scope_to_file(
         &self,
-        scope_metadata: Self::DIScope,
+        scope_metadata: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DIScope,
         file: &SourceFile,
-    ) -> Self::DIScope {
+    ) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DIScope {
         metadata::extend_scope_to_file(self, scope_metadata, file)
     }
 
@@ -486,10 +489,10 @@ impl<'ll, 'tcx> DebugInfoMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         &self,
         variable_name: Symbol,
         variable_type: Ty<'tcx>,
-        scope_metadata: Self::DIScope,
+        scope_metadata: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DIScope,
         variable_kind: VariableKind,
         span: Span,
-    ) -> Self::DIVariable {
+    ) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DIVariable {
         let loc = self.lookup_debug_loc(span.lo());
         let file_metadata = file_metadata(self, &loc.file);
 
