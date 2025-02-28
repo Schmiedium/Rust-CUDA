@@ -1,5 +1,5 @@
 use libc::c_int;
-use rustc_metadata::dynamic_lib::DynamicLibrary;
+// use rustc_metadata::dynamic_lib::DynamicLibrary;
 use rustc_middle::bug;
 use rustc_session::Session;
 use rustc_target::spec::MergeFunctions;

@@ -4,11 +4,11 @@ use crate::{
     llvm::{self, Value},
     ty::LayoutLlvmExt,
 };
-use rustc_ast::{InlineAsmOptions, InlineAsmTemplatePiece, LlvmAsmDialect};
+use rustc_ast::{InlineAsmOptions, InlineAsmTemplatePiece};
 use rustc_codegen_ssa::{
     mir::{operand::OperandValue, place::PlaceRef},
     traits::{
-        AsmBuilderMethods, AsmMethods, BaseTypeMethods, BuilderMethods, ConstMethods,
+        AsmBuilderMethods, BaseTypeCodegenMethods, BuilderMethods, ConstCodegenMethods,
         GlobalAsmOperandRef, InlineAsmOperandRef,
     },
 };

@@ -8,7 +8,7 @@ use rustc_codegen_ssa::{
     back::write::{CodegenContext, ModuleConfig},
     base::maybe_create_entry_wrapper,
     mono_item::MonoItemExt,
-    traits::{BaseTypeMethods, ThinBufferMethods},
+    traits::{BaseTypeCodegenMethods, ThinBufferMethods},
     CompiledModule, ModuleCodegen, ModuleKind,
 };
 use rustc_data_structures::small_c_str::SmallCStr;

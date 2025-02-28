@@ -4,7 +4,7 @@
 
 use crate::{builder::Builder, context::CodegenCx, llvm};
 use rustc_codegen_ssa::mono_item::MonoItemExt;
-use rustc_codegen_ssa::traits::{BaseTypeMethods, BuilderMethods};
+use rustc_codegen_ssa::traits::{BaseTypeCodegenMethods, BuilderMethods};
 use rustc_hir::def_id::LOCAL_CRATE;
 use rustc_middle::{mir::mono::MonoItem, ty::Instance};
 

@@ -6,16 +6,14 @@ use crate::ty::LayoutLlvmExt;
 use libc::c_uint;
 use rustc_codegen_ssa::mir::operand::OperandValue;
 use rustc_codegen_ssa::mir::place::PlaceRef;
-use rustc_codegen_ssa::traits::BaseTypeMethods;
+use rustc_codegen_ssa::traits::BaseTypeCodegenMethods;
 use rustc_codegen_ssa::{traits::*, MemFlags};
 use rustc_middle::bug;
 use rustc_middle::ty::layout::LayoutOf;
-pub use rustc_middle::ty::layout::{FAT_PTR_ADDR, FAT_PTR_EXTRA};
 use rustc_middle::ty::{Ty, TyCtxt, TyKind};
 pub use rustc_target::abi::call::*;
 use rustc_target::abi::call::{CastTarget, Reg, RegKind};
-use rustc_target::abi::{self, HasDataLayout, Int};
-pub use rustc_target::spec::abi::Abi;
+use rustc_target::abi::{self, HasDataLayout, Primitive::Int};
 use tracing::trace;
 
 pub(crate) fn readjust_fn_abi<'tcx>(
@@ -238,7 +236,7 @@ impl<'a, 'll, 'tcx> ArgAbiMethods<'tcx> for Builder<'a, 'll, 'tcx> {
         &mut self,
         arg_abi: &ArgAbi<'tcx, Ty<'tcx>>,
         idx: &mut usize,
-        dst: PlaceRef<'tcx, Self::Value>,
+        dst: PlaceRef<<builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value>,
     ) {
         arg_abi.store_fn_arg(self, idx, dst)
     }
