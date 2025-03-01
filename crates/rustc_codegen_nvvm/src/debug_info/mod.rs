@@ -106,7 +106,7 @@ impl<'a, 'll, 'tcx> DebugInfoBuilderMethods for Builder<'a, 'll, 'tcx> {
         variable_alloca: &'ll Value,
         direct_offset: Size,
         indirect_offsets: &[Size],
-        optional_offset: Option<Range<Size>>,
+        fragment: Option<Range<Size>>,
     ) {
         let op_deref = || unsafe { llvm::LLVMRustDIBuilderCreateOpDeref() };
         let op_plus_uconst = || unsafe { llvm::LLVMRustDIBuilderCreateOpPlusUconst() };

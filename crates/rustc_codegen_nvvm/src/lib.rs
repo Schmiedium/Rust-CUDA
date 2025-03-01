@@ -214,9 +214,9 @@ impl WriteBackendMethods for NvvmCodegenBackend {
 
     unsafe fn optimize_thin(
         cgcx: &CodegenContext<Self>,
-        thin_module: ThinModule<Self>,
+        thin: ThinModule<Self>,
     ) -> Result<ModuleCodegen<Self::Module>, FatalError> {
-        lto::optimize_thin(cgcx, thin_module)
+        lto::optimize_thin(cgcx, thin)
     }
 
     unsafe fn codegen(

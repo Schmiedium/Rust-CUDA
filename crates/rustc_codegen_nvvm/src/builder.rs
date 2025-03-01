@@ -1013,7 +1013,7 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
 
     fn set_cleanup(&mut self, _landing_pad: &'ll Value) {}
 
-    fn resume(&mut self, _exn: &'ll Value, _exn2: &'ll Value) -> () {
+    fn resume(&mut self, _exn0: &'ll Value, _exn1: &'ll Value) -> () {
         self.unsupported("resumes");
     }
 
