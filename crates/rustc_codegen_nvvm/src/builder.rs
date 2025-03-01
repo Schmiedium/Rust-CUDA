@@ -64,6 +64,8 @@ impl<'ll, 'tcx> BackendTypes for Builder<'_, 'll, 'tcx> {
     type Metadata = <CodegenCx<'ll, 'tcx> as BackendTypes>::Metadata;
 }
 
+
+
 impl abi::HasDataLayout for Builder<'_, '_, '_> {
     fn data_layout(&self) -> &abi::TargetDataLayout {
         self.cx.data_layout()
@@ -180,6 +182,23 @@ impl<'a, 'll, 'tcx> CoverageInfoBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> 
     }
 
     fn add_coverage(&mut self, _: Instance<'tcx>, _: &CoverageKind) { todo!() }
+}
+
+impl<'ll, 'tcx, 'a> IntrinsicCallBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
+
+    fn codegen_intrinsic_call(&mut self, instance: ty::Instance<'tcx>, fn_abi: &FnAbi<'tcx, Ty<'tcx>>, args: &[OperandRef<'tcx, &'ll Value>], llresult: &'ll Value, span: Span) -> Result<(), ty::Instance<'tcx>> {todo!()}
+
+    fn abort(&mut self) {todo!()}
+    fn assume(&mut self, val: &'ll Value) {todo!()}
+    fn expect(&mut self, cond: &'ll Value, expected: bool) -> &'ll Value {todo!()}
+    fn type_test(&mut self, pointer: &'ll Value, typeid: &'ll Metadata) -> &'ll Value {todo!()}
+    fn type_checked_load(&mut self, llvtable: &'ll Value, vtable_byte_offset: u64, typeid: &'ll Metadata) -> &'ll Value {todo!()}
+    fn va_start(&mut self, val: &'ll Value) -> &'ll Value {todo!()}
+    fn va_end(&mut self, val: &'ll Value) -> &'ll Value {todo!()}
+}
+
+impl<'ll, 'tcx, 'a> ArgAbiBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
+
 }
 
 impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
