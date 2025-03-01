@@ -19,6 +19,7 @@ use rustc_span::Span;
 use rustc_target::abi::call::FnAbi;
 use rustc_target::abi::{self, AddressSpace, Align, Size, WrappingRange};
 use rustc_target::spec::{HasTargetSpec, Target};
+use rustc_target::callconv::ArgAbi;
 use std::borrow::Cow;
 use std::ffi::{CStr, CString};
 use std::ops::Deref;
@@ -186,18 +187,22 @@ impl<'a, 'll, 'tcx> CoverageInfoBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> 
 
 impl<'ll, 'tcx, 'a> IntrinsicCallBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
 
-    fn codegen_intrinsic_call(&mut self, instance: ty::Instance<'tcx>, fn_abi: &FnAbi<'tcx, Ty<'tcx>>, args: &[OperandRef<'tcx, &'ll Value>], llresult: &'ll Value, span: Span) -> Result<(), ty::Instance<'tcx>> {todo!()}
+    fn codegen_intrinsic_call(&mut self, instance: ty::Instance<'tcx>, fn_abi: &FnAbi<'tcx, Ty<'tcx>>, args: &[OperandRef<'tcx, Self::Value>], llresult: Self::Value, span: Span) -> Result<(), ty::Instance<'tcx>> {todo!()}
 
     fn abort(&mut self) {todo!()}
-    fn assume(&mut self, val: &'ll Value) {todo!()}
-    fn expect(&mut self, cond: &'ll Value, expected: bool) -> &'ll Value {todo!()}
-    fn type_test(&mut self, pointer: &'ll Value, typeid: &'ll Metadata) -> &'ll Value {todo!()}
-    fn type_checked_load(&mut self, llvtable: &'ll Value, vtable_byte_offset: u64, typeid: &'ll Metadata) -> &'ll Value {todo!()}
-    fn va_start(&mut self, val: &'ll Value) -> &'ll Value {todo!()}
-    fn va_end(&mut self, val: &'ll Value) -> &'ll Value {todo!()}
+    fn assume(&mut self, val: Self::Value) {todo!()}
+    fn expect(&mut self, cond: Self::Value, expected: bool) -> Self::Value {todo!()}
+    fn type_test(&mut self, pointer: Self::Value, typeid: Self::Metadata) -> Self::Value {todo!()}
+    fn type_checked_load(&mut self, llvtable: Self::Value, vtable_byte_offset: u64, typeid: Self::Metadata) -> Self::Value {todo!()}
+    fn va_start(&mut self, val: Self::Value) -> Self::Value {todo!()}
+    fn va_end(&mut self, val: Self::Value) -> Self::Value {todo!()}
 }
 
 impl<'ll, 'tcx, 'a> ArgAbiBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
+
+    fn store_fn_arg(&mut self, arg_abi: &ArgAbi<'tcx, Ty<'tcx>>, idx: &mut usize, dst: PlaceRef<'tcx, Self::Value>) {todo!()}
+    fn store_arg(&mut self, arg_abi: &ArgAbi<'tcx, Ty<'tcx>>, val: Self::Value, dst: PlaceRef<'tcx, Self::Value>) {todo!()}
+    fn arg_memory_ty(&self, arg_abi: &ArgAbi<'tcx, Ty<'tcx>>) -> Self::Type {todo!()}
 
 }
 
