@@ -1,7 +1,6 @@
 use rustc_codegen_ssa::CodegenResults;
 use rustc_codegen_ssa::CompiledModule;
 use rustc_codegen_ssa::NativeLib;
-use rustc_data_structures::rustc_erase_owner;
 // use rustc_data_structures::sync::MetadataRef;
 use rustc_hash::FxHashSet;
 use rustc_middle::middle::dependency_format::Linkage;
@@ -41,6 +40,16 @@ impl MetadataLoader for NvvmMetadataLoader {
             .metadata_loader()
             .get_dylib_metadata(target, filename)
     }
+}
+
+// This macro is supposed to be exported by the rustc_data_structures crate, but doesn't import properly. 
+// It's been placed here to since this section relies on it
+macro_rules! rustc_erase_owner {
+    ($v:expr) => {{
+        let v = $v;
+        ::rustc_data_structures::sync::assert_send_val(&v);
+        v.erase_send_sync_owner()
+    }};
 }
 
 fn read_metadata(rlib: &Path) -> Result<MetadataRef, String> {
