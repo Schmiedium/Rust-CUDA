@@ -365,6 +365,26 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         }
     }
 
+    fn fadd_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
+        todo!()
+    }
+
+    fn fsub_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
+        todo!()
+    }
+        
+    fn fmul_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
+        todo!()
+    }
+        
+    fn fdiv_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
+        todo!()
+    }
+        
+    fn frem_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
+        todo!()
+    }
+    
     fn checked_binop(
         &mut self,
         oop: OverflowOp,
@@ -1011,7 +1031,17 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         todo!();
     }
 
+    fn cleanup_landing_pad(&mut self, pers_fn :&'ll Value) -> (&'ll Value, &'ll Value) {
+        todo!()
+    }  
+
+    fn filter_landing_pad(&mut self, pers_fn :&'ll Value) -> (&'ll Value, &'ll Value) {
+        todo!()
+    }
+
     fn set_cleanup(&mut self, _landing_pad: &'ll Value) {}
+
+    fn apply_attrs_to_cleanup_callsite(&mut self, llret: Self::Value) {}
 
     fn resume(&mut self, _exn0: &'ll Value, _exn1: &'ll Value) -> () {
         self.unsupported("resumes");
