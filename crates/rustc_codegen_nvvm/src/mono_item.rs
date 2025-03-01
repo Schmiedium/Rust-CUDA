@@ -7,11 +7,10 @@ use crate::llvm;
 use crate::ty::LayoutLlvmExt;
 use rustc_codegen_ssa::traits::*;
 use rustc_hir::def_id::{DefId, LOCAL_CRATE};
-pub use rustc_middle::mir::mono::MonoItem;
 use rustc_middle::mir::mono::{Linkage, Visibility};
 use rustc_middle::ty::layout::FnAbiOf;
 use rustc_middle::ty::layout::LayoutOf;
-use rustc_middle::ty::{self, Instance, TypeFoldable};
+use rustc_middle::ty::{self, Instance};
 use tracing::trace;
 
 pub(crate) fn visibility_to_llvm(linkage: Visibility) -> llvm::Visibility {

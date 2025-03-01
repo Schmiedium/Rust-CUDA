@@ -1,6 +1,6 @@
 use crate::context::CodegenCx;
 use crate::llvm::Value;
-use rustc_codegen_ssa::traits::{BaseTypeCodegenMethods, DerivedTypeCodegenMethods};
+use rustc_codegen_ssa::traits::BaseTypeCodegenMethods;
 use rustc_session::config::DebugInfo;
 
 impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {

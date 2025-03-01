@@ -183,6 +183,7 @@ impl<'a, 'll, 'tcx> CoverageInfoBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> 
 }
 
 impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
+    
     fn build(cx: &'a CodegenCx<'ll, 'tcx>, llbb: &'ll BasicBlock) -> Self {
         let bx = Builder::with_cx(cx);
         unsafe {
@@ -268,15 +269,18 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
 
     fn invoke(
         &mut self,
-        ty: &'ll Type,
+        llty: &'ll Type,
+        fn_attrs: Option<&CodegenFnAttrs>,
+        fn_abi: Option<&FnAbi<'tcx, Ty<'tcx>>>,
         llfn: &'ll Value,
         args: &[&'ll Value],
         then: &'ll BasicBlock,
         _catch: &'ll BasicBlock,
         funclet: Option<&()>,
+        instance: Option<Instance<'tcx>>,
     ) -> &'ll Value {
         trace!("invoke");
-        let call = self.call(ty, llfn, args, funclet);
+        let call = self.call(llty, llfn, args, funclet);
         // exceptions arent a thing, go directly to the `then` block
         unsafe { llvm::LLVMBuildBr(self.llbuilder, then) };
         call
@@ -1101,9 +1105,12 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
     fn call(
         &mut self,
         _: &'ll Type,
+        fn_attrs: Option<&CodegenFnAttrs>,
+        fn_abi: Option<&FnAbi<'tcx, Ty<'tcx>>>,
         llfn: &'ll Value,
         args: &[&'ll Value],
         _funclet: Option<&()>,
+        instance: Option<Instance<'tcx>>,
     ) -> &'ll Value {
         trace!("Calling fn {:?} with args {:?}", llfn, args);
         self.cx.last_call_llfn.set(None);
@@ -1145,6 +1152,8 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
     fn do_not_inline(&mut self, llret: &'ll Value) {
         llvm::Attribute::NoInline.apply_callsite(llvm::AttributePlace::Function, llret);
     }
+
+    fn switch_to_block(&mut self, _: <Self as rustc_codegen_ssa::traits::BackendTypes>::BasicBlock) { todo!() }
 }
 
 impl<'a, 'll, 'tcx> StaticBuilderMethods for Builder<'a, 'll, 'tcx> {
