@@ -205,13 +205,14 @@ impl<'ll> CodegenCx<'ll, '_> {
 }
 
 impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
+    
     fn create_function_debug_context(
         &self,
         instance: Instance<'tcx>,
         fn_abi: &FnAbi<'tcx, Ty<'tcx>>,
-        llfn: &'ll Value,
+        llfn: Self::Function,
         mir: &mir::Body<'tcx>,
-    ) -> Option<FunctionDebugContext<&'ll DIScope, &'ll DILocation>> {
+    ) -> Option<FunctionDebugContext<'tcx, Self::DIScope, Self::DILocation>> {
         if self.sess().opts.debuginfo == DebugInfo::None {
             return None;
         }
@@ -243,8 +244,8 @@ impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         &self,
         instance: Instance<'tcx>,
         fn_abi: &FnAbi<'tcx, Ty<'tcx>>,
-        maybe_definition_llfn: Option<&'ll Value>,
-    ) -> &'ll DIScope {
+        maybe_definition_llfn: Option<Self::Function>,
+    ) -> Self::DIScope {
         let def_id = instance.def_id();
         let containing_scope = get_containing_scope(self, instance);
         let span = self.tcx.def_span(def_id);
