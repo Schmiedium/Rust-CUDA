@@ -6,7 +6,7 @@
 
 extern crate rustc_arena;
 extern crate rustc_ast;
-extern crate rustc_attr;
+extern crate rustc_attr_data_structures;
 extern crate rustc_codegen_llvm;
 extern crate rustc_codegen_ssa;
 extern crate rustc_data_structures;
