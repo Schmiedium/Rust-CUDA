@@ -4,7 +4,7 @@ use crate::debug_info::{self, compile_unit_metadata, CrateDebugContext};
 use crate::llvm::{self, BasicBlock, Type, Value};
 use crate::{target, LlvmMod};
 use nvvm::NvvmOption;
-use rustc_codegen_ssa::traits::{BackendTypes, BaseTypeCodegenMethods, MiscCodegenMethods, PreDefineCodegenMethods, StaticCodegenMethods, DebugInfoCodegenMethods, AsmCodegenMethods, LayoutTypeCodegenMethods, ConstCodegenMethods, TypeMembershipCodegenMethods};
+use rustc_codegen_ssa::traits::{BackendTypes, BaseTypeCodegenMethods, MiscCodegenMethods, ConstCodegenMethods, TypeMembershipCodegenMethods};
 use rustc_codegen_ssa::traits::DerivedTypeCodegenMethods;
 use rustc_data_structures::base_n;
 use rustc_hash::FxHashMap;
@@ -666,34 +666,6 @@ impl<'ll, 'tcx> CoverageInfoMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     }
 }
 
-impl<'ll, 'tcx> PreDefineCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
-}
-
-impl<'ll, 'tcx> StaticCodegenMethods for CodegenCx<'ll, 'tcx> {
-    
-}
-
-impl<'ll, 'tcx> AsmCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
-}
-
-impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
-}
-
-impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
-}
-
 impl<'ll, 'tcx> TypeMembershipCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
-}
-
-impl<'ll, 'tcx> LayoutTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
-}
-
-impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
 
 }

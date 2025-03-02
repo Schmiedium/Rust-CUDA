@@ -348,7 +348,7 @@ impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
     }
 }
 
-impl<'ll, 'tcx> StaticMethods for CodegenCx<'ll, 'tcx> {
+impl<'ll, 'tcx> StaticCodegenMethods for CodegenCx<'ll, 'tcx> {
     fn static_addr_of(&self, cv: &'ll Value, align: Align, kind: Option<&str>) -> &'ll Value {
         if let Some(&gv) = self.const_globals.borrow().get(&cv) {
             unsafe {
@@ -369,7 +369,7 @@ impl<'ll, 'tcx> StaticMethods for CodegenCx<'ll, 'tcx> {
         gv
     }
 
-    fn codegen_static(&self, def_id: DefId, is_mutable: bool) {
+    fn codegen_static(&self, def_id: DefId) {
         unsafe {
             let attrs = self.tcx.codegen_fn_attrs(def_id);
 

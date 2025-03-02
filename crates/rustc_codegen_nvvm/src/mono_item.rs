@@ -21,7 +21,7 @@ pub(crate) fn visibility_to_llvm(linkage: Visibility) -> llvm::Visibility {
     }
 }
 
-impl<'ll, 'tcx> PreDefineMethods<'tcx> for CodegenCx<'ll, 'tcx> {
+impl<'ll, 'tcx> PreDefineCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     fn predefine_static(
         &self,
         def_id: DefId,

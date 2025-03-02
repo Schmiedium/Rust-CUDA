@@ -9,7 +9,7 @@ use rustc_codegen_ssa::{
     mir::{operand::OperandValue, place::PlaceRef},
     traits::{
         AsmBuilderMethods, BaseTypeCodegenMethods, BuilderMethods, ConstCodegenMethods,
-        GlobalAsmOperandRef, InlineAsmOperandRef,
+        GlobalAsmOperandRef, InlineAsmOperandRef, AsmCodegenMethods
     },
 };
 use rustc_hash::FxHashMap;
@@ -304,7 +304,7 @@ impl<'a, 'll, 'tcx> AsmBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
     }
 }
 
-impl<'ll, 'tcx> AsmMethods for CodegenCx<'ll, 'tcx> {
+impl<'ll, 'tcx> AsmCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     fn codegen_global_asm(
         &self,
         template: &[InlineAsmTemplatePiece],
@@ -342,6 +342,11 @@ impl<'ll, 'tcx> AsmMethods for CodegenCx<'ll, 'tcx> {
             );
         }
     }
+
+    fn mangled_name(&self, instance: Instance<'tcx>) -> String {
+        todo!()
+    }
+
 }
 
 fn reg_to_llvm(reg: InlineAsmRegOrRegClass) -> String {

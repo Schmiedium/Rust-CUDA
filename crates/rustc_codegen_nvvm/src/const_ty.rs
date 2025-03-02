@@ -7,15 +7,14 @@ use rustc_codegen_ssa::{
     mir::place::PlaceRef,
     traits::{BaseTypeCodegenMethods, ConstCodegenMethods, MiscCodegenMethods, StaticCodegenMethods},
 };
-use rustc_middle::mir::interpret::{Allocation, GlobalAlloc, Scalar};
+use rustc_middle::mir::interpret::{ConstAllocation, Allocation, GlobalAlloc, Scalar};
 use rustc_middle::ty::layout::LayoutOf;
 use rustc_middle::ty::{layout::TyAndLayout, ScalarInt};
-use rustc_span::Symbol;
 use rustc_target::abi::{self, AddressSpace, HasDataLayout, Size};
 use tracing::trace;
 
-impl<'ll, 'tcx> ConstMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-    fn const_data_from_alloc(&self, alloc: &Allocation) -> &'ll Value {
+impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
+    fn const_data_from_alloc(&self, alloc: ConstAllocation<'tcx>) -> &'ll Value {
         const_alloc_to_llvm(self, alloc)
     }
 
@@ -70,8 +69,8 @@ impl<'ll, 'tcx> ConstMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         unsafe { llvm::LLVMConstReal(t, val) }
     }
 
-    fn const_str(&self, s: Symbol) -> (&'ll Value, &'ll Value) {
-        let len = s.as_str().len();
+    fn const_str(&self, s: &str) -> (&'ll Value, &'ll Value) {
+        let len = s.len();
         let val = self.const_cstr(s, false);
         let ty = self.type_ptr_to(self.layout_of(self.tcx.types.str_).llvm_type(self));
         let cs = unsafe { llvm::LLVMConstPointerCast(val, ty) };
