@@ -154,12 +154,20 @@ impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         self.isize_ty
     }
 
+    fn type_f16(&self) -> &'ll Type {
+        unsafe { &llvm::LLVMHalfTypeInContext(self.llcx) }
+    }
+
     fn type_f32(&self) -> &'ll Type {
         unsafe { llvm::LLVMFloatTypeInContext(self.llcx) }
     }
 
     fn type_f64(&self) -> &'ll Type {
         unsafe { llvm::LLVMDoubleTypeInContext(self.llcx) }
+    }
+
+    fn type_f128(&self) -> &'ll Type {
+        unsafe { llvm::LLVMFP128TypeInContext(self.llcx) }
     }
 
     fn type_func(&self, args: &[&'ll Type], ret: &'ll Type) -> &'ll Type {
@@ -195,6 +203,14 @@ impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         unsafe { llvm::LLVMPointerType(ty, address_space.0) }
     }
 
+    fn type_ptr(&self) -> &'ll Type {
+        todo!()
+    }
+
+    fn type_ptr_ext(&self, address_space: AddressSpace) -> &'ll Type {
+        todo!()
+    }
+
     fn element_type(&self, ty: &'ll Type) -> &'ll Type {
         let out = unsafe { llvm::LLVMGetElementType(ty) };
         out
@@ -202,6 +218,10 @@ impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
 
     fn vector_length(&self, ty: &'ll Type) -> usize {
         unsafe { llvm::LLVMGetVectorSize(ty) as usize }
+    }
+
+    fn type_array(&self, ty: &'ll Type, len: u64) -> Self::Type {
+        todo!()
     }
 
     fn float_width(&self, ty: &'ll Type) -> usize {

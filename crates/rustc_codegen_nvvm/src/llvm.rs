@@ -292,6 +292,7 @@ pub(crate) enum TypeKind {
     Half = 1,
     Float = 2,
     Double = 3,
+    FP128 = 4,
     Label = 7,
     Integer = 8,
     Function = 9,
@@ -312,6 +313,7 @@ impl TypeKind {
             TypeKind::Half => rustc_codegen_ssa::common::TypeKind::Half,
             TypeKind::Float => rustc_codegen_ssa::common::TypeKind::Float,
             TypeKind::Double => rustc_codegen_ssa::common::TypeKind::Double,
+            TypeKind::FP128 => rustc_codegen_ssa::common::TypeKind::FP128,
             TypeKind::Label => rustc_codegen_ssa::common::TypeKind::Label,
             TypeKind::Integer => rustc_codegen_ssa::common::TypeKind::Integer,
             TypeKind::Function => rustc_codegen_ssa::common::TypeKind::Function,
@@ -1118,8 +1120,10 @@ extern "C" {
     pub(crate) fn LLVMGetIntTypeWidth(IntegerTy: &Type) -> c_uint;
 
     // Operations on real types
+    pub(crate) fn LLVMHalfTypeInContext(C: &Context) -> &Type;
     pub(crate) fn LLVMFloatTypeInContext(C: &Context) -> &Type;
     pub(crate) fn LLVMDoubleTypeInContext(C: &Context) -> &Type;
+    pub(crate) fn LLVMFP128TypeInContext(C: &Context) -> &Type;
 
     // Operations on function types
     pub(crate) fn LLVMFunctionType<'a>(
