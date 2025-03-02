@@ -14,6 +14,11 @@ use rustc_target::abi::{self, AddressSpace, HasDataLayout, Size};
 use tracing::trace;
 
 impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
+
+    fn is_undef(&self, t: Self::Value) -> bool {
+        todo!()
+    }
+
     fn const_data_from_alloc(&self, alloc: ConstAllocation<'tcx>) -> &'ll Value {
         const_alloc_to_llvm(self, alloc)
     }
@@ -24,6 +29,10 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
 
     fn const_undef(&self, t: &'ll Type) -> &'ll Value {
         unsafe { llvm::LLVMGetUndef(t) }
+    }
+
+    fn const_poison(&self, t: &'ll Type) -> &'ll Value {
+        todo!()
     }
 
     fn const_int(&self, t: &'ll Type, i: i64) -> &'ll Value {
@@ -45,6 +54,14 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         self.const_uint(self.type_i1(), val as u64)
     }
 
+    fn const_i8(&self, i: i8) -> &'ll Value {
+        self.const_int(self.type_i8(), i as i64)
+    }
+
+    fn const_i16(&self, i: i16) -> &'ll Value {
+        self.const_int(self.type_i16(), i as i64)
+    }
+
     fn const_i32(&self, i: i32) -> &'ll Value {
         self.const_int(self.type_i32(), i as i64)
     }
@@ -55,6 +72,10 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
 
     fn const_u64(&self, i: u64) -> &'ll Value {
         self.const_uint(self.type_i64(), i)
+    }
+
+    fn const_u128(&self, i: u128) -> &'ll Value {
+        self.const_uint(self.type_i128(), i)
     }
 
     fn const_usize(&self, i: u64) -> &'ll Value {
@@ -100,6 +121,10 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
                 success.then(|| hi_lo_to_u128(lo, hi))
             })
         }
+    }
+
+    fn const_vector(&self, elts: &[Self::Value]) -> Self::Value {
+        todo!()
     }
 
     fn scalar_to_backend(
@@ -213,6 +238,10 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
 
     fn const_ptrcast(&self, val: &'ll Value, ty: &'ll Type) -> &'ll Value {
         unsafe { llvm::LLVMConstPointerCast(val, ty) }
+    }
+
+    fn const_ptr_byte_offset(&self, val: &'ll Value, size: Size) -> &'ll Value {
+        todo!()
     }
 }
 
