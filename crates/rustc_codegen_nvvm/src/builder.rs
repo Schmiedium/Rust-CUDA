@@ -207,6 +207,8 @@ impl<'ll, 'tcx, 'a> ArgAbiBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
 }
 
 impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
+
+    type CodegenCx = CodegenCx<'ll, 'tcx>;
     
     fn build(cx: &'a CodegenCx<'ll, 'tcx>, llbb: &'ll BasicBlock) -> Self {
         let bx = Builder::with_cx(cx);
