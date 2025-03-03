@@ -1,10 +1,10 @@
 use rustc_codegen_ssa::CodegenResults;
 use rustc_codegen_ssa::CompiledModule;
 use rustc_codegen_ssa::NativeLib;
-// use rustc_data_structures::sync::MetadataRef;
+use rustc_data_structures::owned_slice::OwnedSlice;
 use rustc_hash::FxHashSet;
 use rustc_middle::middle::dependency_format::Linkage;
-// use rustc_session::cstore::MetadataLoader;
+use rustc_metadata::creader::MetadataLoader;
 use rustc_session::output::out_filename;
 use rustc_session::{
     config::{CrateType, OutputFilenames, OutputType},
@@ -28,12 +28,12 @@ use crate::LlvmMod;
 pub(crate) struct NvvmMetadataLoader;
 
 impl MetadataLoader for NvvmMetadataLoader {
-    fn get_rlib_metadata(&self, _target: &Target, filename: &Path) -> Result<MetadataRef, String> {
+    fn get_rlib_metadata(&self, _target: &Target, filename: &Path) -> Result<OwnedSlice, String> {
         trace!("Retrieving rlib metadata for `{:?}`", filename);
         read_metadata(filename)
     }
 
-    fn get_dylib_metadata(&self, target: &Target, filename: &Path) -> Result<MetadataRef, String> {
+    fn get_dylib_metadata(&self, target: &Target, filename: &Path) -> Result<OwnedSlice, String> {
         trace!("Retrieving dylib metadata for `{:?}`", filename);
         // This is required for loading metadata from proc macro crates compiled as dylibs for the host target.
         rustc_codegen_llvm::LlvmCodegenBackend::new()
@@ -47,13 +47,13 @@ impl MetadataLoader for NvvmMetadataLoader {
 macro_rules! rustc_erase_owner {
     ($v:expr) => {{
         let v = $v;
-        ::rustc_data_structures::sync::assert_send_val(&v);
+        ::rustc_data_structures::sync::assert_dyn_send_val(&v);
         v.erase_send_sync_owner()
     }};
 }
 
-fn read_metadata(rlib: &Path) -> Result<MetadataRef, String> {
-    let read_meta = || -> Result<Option<MetadataRef>, io::Error> {
+fn read_metadata(rlib: &Path) -> Result<OwnedSlice, String> {
+    let read_meta = || -> Result<Option<OwnedSlice>, io::Error> {
         for entry in Archive::new(File::open(rlib)?).entries()? {
             let mut entry = entry?;
             if entry.path()? == Path::new(".metadata") {
@@ -93,7 +93,7 @@ pub fn link<'tcx>(
         for obj in codegen_results
             .modules
             .iter()
-            .filter_map(|m| m.object.Some(as_ref()))
+            .filter_map(|m| Some(m.object.as_ref()))
         {
             check_file_is_writeable(obj, sess);
         }
@@ -126,7 +126,7 @@ fn link_rlib(sess: &Session, codegen_results: &CodegenResults, out_filename: &Pa
     for obj in codegen_results
         .modules
         .iter()
-        .filter_map(|m| m.object.Some(as_ref()))
+        .filter_map(|m| Some(m.object.as_ref()))
     {
         file_list.push(obj);
     }
@@ -377,7 +377,7 @@ fn add_upstream_native_libraries(
 
 fn relevant_lib(sess: &Session, lib: &NativeLib) -> bool {
     match lib.cfg {
-        Some(ref cfg) => rustc_attr::cfg_matches(cfg, &sess.parse_sess, None),
+        Some(ref cfg) => rustc_attr_parsing::cfg_matches(cfg, &sess.parse_sess, None),
         None => true,
     }
 }

@@ -7,6 +7,7 @@
 extern crate rustc_arena;
 extern crate rustc_ast;
 extern crate rustc_attr_data_structures;
+extern crate rustc_attr_parsing;
 extern crate rustc_codegen_llvm;
 extern crate rustc_codegen_ssa;
 extern crate rustc_data_structures;
@@ -23,6 +24,7 @@ extern crate rustc_query_system;
 extern crate rustc_session;
 extern crate rustc_span;
 extern crate rustc_target;
+extern crate rustc_abi;
 
 mod abi;
 mod allocator;
@@ -50,17 +52,18 @@ mod ty;
 use abi::readjust_fn_abi;
 use back::target_machine_factory;
 use lto::ThinBuffer;
+use rustc_ast::expand::autodiff_attrs::AutoDiffItem;
 use rustc_codegen_ssa::{
     back::{
         lto::{LtoModuleCodegen, SerializedModule, ThinModule},
-        write::{CodegenContext, ModuleConfig, OngoingCodegen},
+        write::{CodegenContext, ModuleConfig, OngoingCodegen, FatLtoInput},
     },
     traits::{CodegenBackend, ExtraBackendMethods, WriteBackendMethods},
     CodegenResults, CompiledModule, ModuleCodegen,
 };
-use rustc_errors::FatalError;
-use rustc_hash::FxHashMap;
-use rustc_metadata::EncodedMetadata;
+use rustc_errors::{FatalError, DiagCtxtHandle};
+use rustc_data_structures::fx::FxIndexMap;
+use rustc_metadata::{EncodedMetadata, creader::MetadataLoaderDyn};
 use rustc_middle::query;
 use rustc_middle::{
     dep_graph::{WorkProduct, WorkProductId},
@@ -109,7 +112,7 @@ impl CodegenBackend for NvvmCodegenBackend {
             Ok(readjust_fn_abi(tcx, result?))
         };
     }
-    fn provide_extern(&self, _providers: &mut query::ExternProviders) {}
+
 
     fn codegen_crate(
         &self,
@@ -132,7 +135,7 @@ impl CodegenBackend for NvvmCodegenBackend {
         ongoing_codegen: Box<dyn std::any::Any>,
         sess: &Session,
         outputs: &rustc_session::config::OutputFilenames,
-    ) -> Result<(CodegenResults, FxHashMap<WorkProductId, WorkProduct>), ErrorReported> {
+    ) -> (CodegenResults, FxIndexMap<WorkProductId, WorkProduct>) {
         debug!("Join codegen");
         let (codegen_results, work_products) = ongoing_codegen
             .downcast::<OngoingCodegen<Self>>()
@@ -141,7 +144,7 @@ impl CodegenBackend for NvvmCodegenBackend {
 
         sess.compile_status()?;
 
-        Ok((codegen_results, work_products))
+        (codegen_results, work_products)
     }
 
     fn link(
@@ -149,14 +152,13 @@ impl CodegenBackend for NvvmCodegenBackend {
         sess: &rustc_session::Session,
         codegen_results: rustc_codegen_ssa::CodegenResults,
         outputs: &OutputFilenames,
-    ) -> Result<(), rustc_errors::ErrorReported> {
+    ) {
         link::link(
             sess,
             &codegen_results,
             outputs,
             &codegen_results.crate_info.local_crate_name.as_str(),
         );
-        Ok(())
     }
     fn locale_resource(&self) -> &'static str { todo!() }
 }
@@ -164,7 +166,6 @@ impl CodegenBackend for NvvmCodegenBackend {
 impl WriteBackendMethods for NvvmCodegenBackend {
     type Module = LlvmMod;
     type ModuleBuffer = lto::ModuleBuffer;
-    type Context = llvm::Context;
     type TargetMachine = &'static mut llvm::TargetMachine;
     type ThinData = ();
     type ThinBuffer = ThinBuffer;
@@ -172,7 +173,7 @@ impl WriteBackendMethods for NvvmCodegenBackend {
 
     fn run_link(
         _cgcx: &CodegenContext<Self>,
-        _diag_handler: &Handler,
+        _diag_handler: DiagCtxtHandle<'_>,
         _modules: Vec<ModuleCodegen<Self::Module>>,
     ) -> Result<ModuleCodegen<Self::Module>, FatalError> {
         // TODO(Rdambrosio016):
@@ -185,7 +186,7 @@ impl WriteBackendMethods for NvvmCodegenBackend {
 
     fn run_fat_lto(
         _: &CodegenContext<Self>,
-        _: Vec<FatLTOInput<Self>>,
+        _: Vec<FatLtoInput<Self>>,
         _: Vec<(SerializedModule<Self::ModuleBuffer>, WorkProduct)>,
     ) -> Result<LtoModuleCodegen<Self>, FatalError> {
         todo!()
@@ -205,7 +206,7 @@ impl WriteBackendMethods for NvvmCodegenBackend {
 
     unsafe fn optimize(
         cgcx: &CodegenContext<Self>,
-        diag_handler: &Handler,
+        diag_handler: DiagCtxtHandle<'_>,
         module: &ModuleCodegen<Self::Module>,
         config: &ModuleConfig,
     ) -> Result<(), FatalError> {
@@ -221,7 +222,7 @@ impl WriteBackendMethods for NvvmCodegenBackend {
 
     unsafe fn codegen(
         cgcx: &CodegenContext<Self>,
-        diag_handler: &Handler,
+        diag_handler: DiagCtxtHandle<'_>,
         module: ModuleCodegen<Self::Module>,
         config: &ModuleConfig,
     ) -> Result<CompiledModule, FatalError> {
@@ -248,32 +249,16 @@ impl WriteBackendMethods for NvvmCodegenBackend {
         }
     }
 
-    fn run_lto_pass_manager(
-        _: &CodegenContext<Self>,
-        _: &ModuleCodegen<Self::Module>,
-        _: &ModuleConfig,
-        _: bool,
-    ) -> Result<(), FatalError> {
-        todo!()
-    }
     fn print_statistics(&self) { todo!() }
     fn optimize_fat(_: &CodegenContext<Self>, _: &mut ModuleCodegen<<Self as rustc_codegen_ssa::traits::WriteBackendMethods>::Module>) -> Result<(), FatalError> { todo!() }
     fn autodiff(_: &CodegenContext<Self>, _: TyCtxt<'_>, _: &ModuleCodegen<<Self as rustc_codegen_ssa::traits::WriteBackendMethods>::Module>, _: Vec<AutoDiffItem>, _: &ModuleConfig) -> Result<(), FatalError> { todo!() }
 }
 
 impl ExtraBackendMethods for NvvmCodegenBackend {
-    fn new_metadata(&self, _sess: TyCtxt<'_>, mod_name: &str) -> Self::Module {
-        LlvmMod::new(mod_name)
-    }
+    // fn new_metadata(&self, _sess: TyCtxt<'_>, mod_name: &str) -> Self::Module {
+    //     LlvmMod::new(mod_name)
+    // }
 
-    fn write_compressed_metadata<'tcx>(
-        &self,
-        _tcx: TyCtxt<'tcx>,
-        _metadata: &EncodedMetadata,
-        _llvm_module: &mut Self::Module,
-    ) {
-        todo!()
-    }
 
     fn codegen_allocator<'tcx>(
         &self,
@@ -282,7 +267,7 @@ impl ExtraBackendMethods for NvvmCodegenBackend {
         kind: rustc_ast::expand::allocator::AllocatorKind,
         alloc_error_handler_kind: rustc_ast::expand::allocator::AllocatorKind,
      ) -> LlvmMod {
-        unsafe { allocator::codegen(tcx, mods, kind, has_alloc_error_handler) }
+        unsafe { allocator::codegen(tcx, _module_name, kind, alloc_error_handler_kind) }
     }
 
     fn compile_codegen_unit(
@@ -302,13 +287,6 @@ impl ExtraBackendMethods for NvvmCodegenBackend {
         target_machine_factory(sess, opt_level)
     }
 
-    fn target_cpu<'b>(&self, _sess: &'b Session) -> &'b str {
-        todo!()
-    }
-
-    fn tune_cpu<'b>(&self, _sess: &'b Session) -> Option<&'b str> {
-        todo!()
-    }
 }
 
 /// Create the LLVM module for the rest of the compilation, this houses

@@ -422,13 +422,14 @@ impl<'a, 'll, 'tcx> IntrinsicCallMethods<'tcx> for Builder<'a, 'll, 'tcx> {
                 }
             }
             sym::raw_eq => {
-                use abi::Abi::*;
+                // use abi::Abi::*;
+                use rustc_abi::*;
                 use rustc_codegen_ssa::common::IntPredicate;
                 let tp_ty = substs.type_at(0);
                 let layout = self.layout_of(tp_ty).layout;
                 let use_integer_compare = match layout.abi {
-                    Scalar(_) | ScalarPair(_, _) => true,
-                    Uninhabited | Vector { .. } => false,
+                    BackendRepr::Scalar(_) | BackendRepr::ScalarPair(_, _) => true,
+                    Uninhabited | BackendRepr::Vector { .. } => false,
                     Aggregate { .. } => {
                         // For rusty ABIs, small aggregates are actually passed
                         // as `RegKind::Integer` (see `FnAbi::adjust_for_abi`),
@@ -483,13 +484,13 @@ impl<'a, 'll, 'tcx> IntrinsicCallMethods<'tcx> for Builder<'a, 'll, 'tcx> {
         self.call(self.type_i1(), fnname, &[], None);
     }
 
-    fn assume(&mut self, val: <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value) {
+    fn assume(&mut self, val: <Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value) {
         trace!("Generate assume call with `{:?}`", val);
         let assume_intrinsic = self.get_intrinsic("llvm.assume");
         self.call(self.type_i1(), assume_intrinsic, &[val], None);
     }
 
-    fn expect(&mut self, cond: <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value, expected: bool) -> <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
+    fn expect(&mut self, cond: <Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value, expected: bool) -> <Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
         trace!("Generate expect call with `{:?}`, {}", cond, expected);
         let expect = self.get_intrinsic("llvm.expect.i1");
         self.call(
@@ -500,18 +501,18 @@ impl<'a, 'll, 'tcx> IntrinsicCallMethods<'tcx> for Builder<'a, 'll, 'tcx> {
         )
     }
 
-    fn type_test(&mut self, _pointer: <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value, _typeid: <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value) -> <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
+    fn type_test(&mut self, _pointer: <Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value, _typeid: <Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value) -> <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
         // LLVM CFI doesnt make sense on the GPU
         self.const_i32(0)
     }
 
-    fn va_start(&mut self, va_list: &'ll Value) -> <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
+    fn va_start(&mut self, va_list: &'ll Value) -> <Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
         trace!("Generate va_start `{:?}`", va_list);
         let intrinsic = self.cx().get_intrinsic("llvm.va_start");
         self.call(self.type_i1(), intrinsic, &[va_list], None)
     }
 
-    fn va_end(&mut self, va_list: &'ll Value) -> <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
+    fn va_end(&mut self, va_list: &'ll Value) -> <Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
         trace!("Generate va_end call `{:?}`", va_list);
         let intrinsic = self.cx().get_intrinsic("llvm.va_end");
         self.call(self.type_i1(), intrinsic, &[va_list], None)

@@ -126,9 +126,9 @@ impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
 }
 
 impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-    fn type_i1(&self) -> &'ll Type {
-        unsafe { llvm::LLVMInt1TypeInContext(self.llcx) }
-    }
+    // fn type_i1(&self) -> &'ll Type {
+    //     unsafe { llvm::LLVMInt1TypeInContext(self.llcx) }
+    // }
 
     fn type_i8(&self) -> &'ll Type {
         unsafe { llvm::LLVMInt8TypeInContext(self.llcx) }
@@ -174,34 +174,34 @@ impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         unsafe { llvm::LLVMFunctionType(ret, args.as_ptr(), args.len() as c_uint, False) }
     }
 
-    fn type_struct(&self, els: &[&'ll Type], packed: bool) -> &'ll Type {
-        unsafe {
-            llvm::LLVMStructTypeInContext(
-                self.llcx,
-                els.as_ptr(),
-                els.len() as c_uint,
-                packed as Bool,
-            )
-        }
-    }
+    // fn type_struct(&self, els: &[&'ll Type], packed: bool) -> &'ll Type {
+    //     unsafe {
+    //         llvm::LLVMStructTypeInContext(
+    //             self.llcx,
+    //             els.as_ptr(),
+    //             els.len() as c_uint,
+    //             packed as Bool,
+    //         )
+    //     }
+    // }
 
     fn type_kind(&self, ty: &'ll Type) -> TypeKind {
         unsafe { llvm::LLVMRustGetTypeKind(ty).to_generic() }
     }
 
-    fn type_ptr_to(&self, ty: &'ll Type) -> &'ll Type {
-        assert_ne!(
-            self.type_kind(ty),
-            TypeKind::Function,
-            "don't call ptr_to on function types, use ptr_to_llvm_type on FnAbi instead or explicitly specify an address space if it makes sense"
-        );
+    // fn type_ptr_to(&self, ty: &'ll Type) -> &'ll Type {
+    //     assert_ne!(
+    //         self.type_kind(ty),
+    //         TypeKind::Function,
+    //         "don't call ptr_to on function types, use ptr_to_llvm_type on FnAbi instead or explicitly specify an address space if it makes sense"
+    //     );
 
-        unsafe { llvm::LLVMPointerType(ty, AddressSpace::DATA.0) }
-    }
+    //     unsafe { llvm::LLVMPointerType(ty, AddressSpace::DATA.0) }
+    // }
 
-    fn type_ptr_to_ext(&self, ty: &'ll Type, address_space: AddressSpace) -> &'ll Type {
-        unsafe { llvm::LLVMPointerType(ty, address_space.0) }
-    }
+    // fn type_ptr_to_ext(&self, ty: &'ll Type, address_space: AddressSpace) -> &'ll Type {
+    //     unsafe { llvm::LLVMPointerType(ty, address_space.0) }
+    // }
 
     fn type_ptr(&self) -> &'ll Type {
         todo!()
@@ -256,9 +256,9 @@ impl<'ll, 'tcx> LayoutTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     fn is_backend_scalar_pair(&self, layout: TyAndLayout<'tcx>) -> bool {
         layout.is_llvm_scalar_pair()
     }
-    fn backend_field_index(&self, layout: TyAndLayout<'tcx>, index: usize) -> u64 {
-        layout.llvm_field_index(index)
-    }
+    // fn backend_field_index(&self, layout: TyAndLayout<'tcx>, index: usize) -> u64 {
+    //     layout.llvm_field_index(index)
+    // }
     fn scalar_pair_element_backend_type(
         &self,
         layout: TyAndLayout<'tcx>,
