@@ -3,8 +3,8 @@ use rustc_codegen_ssa::CompiledModule;
 use rustc_codegen_ssa::NativeLib;
 use rustc_data_structures::owned_slice::OwnedSlice;
 use rustc_hash::FxHashSet;
-use rustc_middle::middle::dependency_format::Linkage;
 use rustc_metadata::creader::MetadataLoader;
+use rustc_middle::middle::dependency_format::Linkage;
 use rustc_session::output::out_filename;
 use rustc_session::{
     config::{CrateType, OutputFilenames, OutputType},
@@ -42,7 +42,7 @@ impl MetadataLoader for NvvmMetadataLoader {
     }
 }
 
-// This macro is supposed to be exported by the rustc_data_structures crate, but doesn't import properly. 
+// This macro is supposed to be exported by the rustc_data_structures crate, but doesn't import properly.
 // It's been placed here to since this section relies on it
 macro_rules! rustc_erase_owner {
     ($v:expr) => {{

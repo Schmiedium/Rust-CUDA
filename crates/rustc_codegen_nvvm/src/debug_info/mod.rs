@@ -170,8 +170,12 @@ impl<'a, 'll, 'tcx> DebugInfoBuilderMethods for Builder<'a, 'll, 'tcx> {
         }
     }
 
-    fn clear_dbg_loc(&mut self) { todo!() }
-    fn get_dbg_loc(&self) -> Option<&'ll DILocation> { todo!() }
+    fn clear_dbg_loc(&mut self) {
+        todo!()
+    }
+    fn get_dbg_loc(&self) -> Option<&'ll DILocation> {
+        todo!()
+    }
 }
 
 /// A source code location used to generate debug information.
@@ -205,7 +209,6 @@ impl<'ll> CodegenCx<'ll, '_> {
 }
 
 impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-    
     fn create_function_debug_context(
         &self,
         instance: Instance<'tcx>,
@@ -456,7 +459,9 @@ impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     fn dbg_loc(
         &self,
         scope: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DIScope,
-        inlined_at: Option<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DILocation>,
+        inlined_at: Option<
+            <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DILocation,
+        >,
         span: Span,
     ) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::DILocation {
         let DebugLoc { line, col, .. } = self.lookup_debug_loc(span.lo());

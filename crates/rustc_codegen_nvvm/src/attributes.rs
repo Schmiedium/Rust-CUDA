@@ -1,5 +1,5 @@
 use crate::llvm::{self, AttributePlace::*, Value};
-use rustc_ast::{Attribute, token::Lit, LitKind};
+use rustc_ast::{token::Lit, Attribute, LitKind};
 use rustc_attr_data_structures::{InlineAttr, OptimizeAttr};
 use rustc_middle::{middle::codegen_fn_attrs::CodegenFnAttrFlags, ty};
 use rustc_session::{config::OptLevel, Session};

@@ -5,16 +5,17 @@ use libc::c_uint;
 use rustc_ast::Mutability;
 use rustc_codegen_ssa::{
     mir::place::PlaceRef,
-    traits::{BaseTypeCodegenMethods, ConstCodegenMethods, MiscCodegenMethods, StaticCodegenMethods},
+    traits::{
+        BaseTypeCodegenMethods, ConstCodegenMethods, MiscCodegenMethods, StaticCodegenMethods,
+    },
 };
-use rustc_middle::mir::interpret::{ConstAllocation, Allocation, GlobalAlloc, Scalar};
+use rustc_middle::mir::interpret::{Allocation, ConstAllocation, GlobalAlloc, Scalar};
 use rustc_middle::ty::layout::LayoutOf;
 use rustc_middle::ty::{layout::TyAndLayout, ScalarInt};
 use rustc_target::abi::{self, AddressSpace, HasDataLayout, Size};
 use tracing::trace;
 
 impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
     fn is_undef(&self, t: Self::Value) -> bool {
         todo!()
     }

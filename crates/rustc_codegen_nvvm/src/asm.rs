@@ -8,8 +8,8 @@ use rustc_ast::{InlineAsmOptions, InlineAsmTemplatePiece};
 use rustc_codegen_ssa::{
     mir::{operand::OperandValue, place::PlaceRef},
     traits::{
-        AsmBuilderMethods, BaseTypeCodegenMethods, BuilderMethods, ConstCodegenMethods,
-        GlobalAsmOperandRef, InlineAsmOperandRef, AsmCodegenMethods
+        AsmBuilderMethods, AsmCodegenMethods, BaseTypeCodegenMethods, BuilderMethods,
+        ConstCodegenMethods, GlobalAsmOperandRef, InlineAsmOperandRef,
     },
 };
 use rustc_hash::FxHashMap;
@@ -119,7 +119,10 @@ impl<'a, 'll, 'tcx> AsmBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
         line_spans: &[Span],
         _inst: Instance,
         basic_block: Option<<Self as rustc_codegen_ssa::traits::BackendTypes>::BasicBlock>,
-        other_thing: std::option::Option<(<Self as rustc_codegen_ssa::traits::BackendTypes>::BasicBlock, std::option::Option<&<Self as rustc_codegen_ssa::traits::BackendTypes>::Funclet>)>,
+        other_thing: std::option::Option<(
+            <Self as rustc_codegen_ssa::traits::BackendTypes>::BasicBlock,
+            std::option::Option<&<Self as rustc_codegen_ssa::traits::BackendTypes>::Funclet>,
+        )>,
     ) {
         // Collect the types of output operands
         let mut constraints = vec![];
@@ -346,7 +349,6 @@ impl<'ll, 'tcx> AsmCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     fn mangled_name(&self, instance: Instance<'tcx>) -> String {
         todo!()
     }
-
 }
 
 fn reg_to_llvm(reg: InlineAsmRegOrRegClass) -> String {

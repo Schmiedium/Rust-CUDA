@@ -236,7 +236,9 @@ impl<'a, 'll, 'tcx> ArgAbiMethods<'tcx> for Builder<'a, 'll, 'tcx> {
         &mut self,
         arg_abi: &ArgAbi<'tcx, Ty<'tcx>>,
         idx: &mut usize,
-        dst: PlaceRef<<builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value>,
+        dst: PlaceRef<
+            <builder::Builder<'a, 'll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value,
+        >,
     ) {
         arg_abi.store_fn_arg(self, idx, dst)
     }

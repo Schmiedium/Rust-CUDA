@@ -12,14 +12,15 @@ use rustc_codegen_ssa::traits::*;
 use rustc_codegen_ssa::MemFlags;
 use rustc_hir::def_id::DefId;
 use rustc_middle::ty::layout::{
-    FnAbiError, FnAbiOfHelpers, FnAbiRequest, LayoutError, LayoutOfHelpers, TyAndLayout, HasTypingEnv,
+    FnAbiError, FnAbiOfHelpers, FnAbiRequest, HasTypingEnv, LayoutError, LayoutOfHelpers,
+    TyAndLayout,
 };
 use rustc_middle::ty::{self, Ty, TyCtxt};
 use rustc_span::Span;
 use rustc_target::abi::call::FnAbi;
 use rustc_target::abi::{self, AddressSpace, Align, Size, WrappingRange};
-use rustc_target::spec::{HasTargetSpec, Target};
 use rustc_target::callconv::ArgAbi;
+use rustc_target::spec::{HasTargetSpec, Target};
 use std::borrow::Cow;
 use std::ffi::{CStr, CString};
 use std::ops::Deref;
@@ -64,8 +65,6 @@ impl<'ll, 'tcx> BackendTypes for Builder<'_, 'll, 'tcx> {
     type DIVariable = <CodegenCx<'ll, 'tcx> as BackendTypes>::DIVariable;
     type Metadata = <CodegenCx<'ll, 'tcx> as BackendTypes>::Metadata;
 }
-
-
 
 impl abi::HasDataLayout for Builder<'_, '_, '_> {
     fn data_layout(&self) -> &abi::TargetDataLayout {
@@ -182,34 +181,76 @@ impl<'a, 'll, 'tcx> CoverageInfoBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> 
         todo!()
     }
 
-    fn add_coverage(&mut self, _: Instance<'tcx>, _: &CoverageKind) { todo!() }
+    fn add_coverage(&mut self, _: Instance<'tcx>, _: &CoverageKind) {
+        todo!()
+    }
 }
 
 impl<'ll, 'tcx, 'a> IntrinsicCallBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
+    fn codegen_intrinsic_call(
+        &mut self,
+        instance: ty::Instance<'tcx>,
+        fn_abi: &FnAbi<'tcx, Ty<'tcx>>,
+        args: &[OperandRef<'tcx, Self::Value>],
+        llresult: Self::Value,
+        span: Span,
+    ) -> Result<(), ty::Instance<'tcx>> {
+        todo!()
+    }
 
-    fn codegen_intrinsic_call(&mut self, instance: ty::Instance<'tcx>, fn_abi: &FnAbi<'tcx, Ty<'tcx>>, args: &[OperandRef<'tcx, Self::Value>], llresult: Self::Value, span: Span) -> Result<(), ty::Instance<'tcx>> {todo!()}
-
-    fn abort(&mut self) {todo!()}
-    fn assume(&mut self, val: Self::Value) {todo!()}
-    fn expect(&mut self, cond: Self::Value, expected: bool) -> Self::Value {todo!()}
-    fn type_test(&mut self, pointer: Self::Value, typeid: Self::Metadata) -> Self::Value {todo!()}
-    fn type_checked_load(&mut self, llvtable: Self::Value, vtable_byte_offset: u64, typeid: Self::Metadata) -> Self::Value {todo!()}
-    fn va_start(&mut self, val: Self::Value) -> Self::Value {todo!()}
-    fn va_end(&mut self, val: Self::Value) -> Self::Value {todo!()}
+    fn abort(&mut self) {
+        todo!()
+    }
+    fn assume(&mut self, val: Self::Value) {
+        todo!()
+    }
+    fn expect(&mut self, cond: Self::Value, expected: bool) -> Self::Value {
+        todo!()
+    }
+    fn type_test(&mut self, pointer: Self::Value, typeid: Self::Metadata) -> Self::Value {
+        todo!()
+    }
+    fn type_checked_load(
+        &mut self,
+        llvtable: Self::Value,
+        vtable_byte_offset: u64,
+        typeid: Self::Metadata,
+    ) -> Self::Value {
+        todo!()
+    }
+    fn va_start(&mut self, val: Self::Value) -> Self::Value {
+        todo!()
+    }
+    fn va_end(&mut self, val: Self::Value) -> Self::Value {
+        todo!()
+    }
 }
 
 impl<'ll, 'tcx, 'a> ArgAbiBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
-
-    fn store_fn_arg(&mut self, arg_abi: &ArgAbi<'tcx, Ty<'tcx>>, idx: &mut usize, dst: PlaceRef<'tcx, Self::Value>) {todo!()}
-    fn store_arg(&mut self, arg_abi: &ArgAbi<'tcx, Ty<'tcx>>, val: Self::Value, dst: PlaceRef<'tcx, Self::Value>) {todo!()}
-    fn arg_memory_ty(&self, arg_abi: &ArgAbi<'tcx, Ty<'tcx>>) -> Self::Type {todo!()}
-
+    fn store_fn_arg(
+        &mut self,
+        arg_abi: &ArgAbi<'tcx, Ty<'tcx>>,
+        idx: &mut usize,
+        dst: PlaceRef<'tcx, Self::Value>,
+    ) {
+        todo!()
+    }
+    fn store_arg(
+        &mut self,
+        arg_abi: &ArgAbi<'tcx, Ty<'tcx>>,
+        val: Self::Value,
+        dst: PlaceRef<'tcx, Self::Value>,
+    ) {
+        todo!()
+    }
+    fn arg_memory_ty(&self, arg_abi: &ArgAbi<'tcx, Ty<'tcx>>) -> Self::Type {
+        todo!()
+    }
 }
 
 impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
-
     type CodegenCx = CodegenCx<'ll, 'tcx>;
-    
+
     fn build(cx: &'a CodegenCx<'ll, 'tcx>, llbb: &'ll BasicBlock) -> Self {
         let bx = Builder::with_cx(cx);
         unsafe {
@@ -398,19 +439,19 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
     fn fsub_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
         todo!()
     }
-        
+
     fn fmul_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
         todo!()
     }
-        
+
     fn fdiv_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
         todo!()
     }
-        
+
     fn frem_algebraic(&mut self, lhs: &'ll Value, rhs: &'ll Value) -> &'ll Value {
         todo!()
     }
-    
+
     fn checked_binop(
         &mut self,
         oop: OverflowOp,
@@ -684,7 +725,6 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         );
         body_bx.br(header_bx.llbb());
         header_bx.add_incoming_to_phi(current, next, body_bx.llbb());
-        
     }
 
     fn range_metadata(&mut self, load: &'ll Value, range: WrappingRange) {
@@ -1057,11 +1097,11 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         todo!();
     }
 
-    fn cleanup_landing_pad(&mut self, pers_fn :&'ll Value) -> (&'ll Value, &'ll Value) {
+    fn cleanup_landing_pad(&mut self, pers_fn: &'ll Value) -> (&'ll Value, &'ll Value) {
         todo!()
-    }  
+    }
 
-    fn filter_landing_pad(&mut self, pers_fn :&'ll Value) -> (&'ll Value, &'ll Value) {
+    fn filter_landing_pad(&mut self, pers_fn: &'ll Value) -> (&'ll Value, &'ll Value) {
         todo!()
     }
 
@@ -1209,7 +1249,12 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         llvm::Attribute::NoInline.apply_callsite(llvm::AttributePlace::Function, llret);
     }
 
-    fn switch_to_block(&mut self, _: <Self as rustc_codegen_ssa::traits::BackendTypes>::BasicBlock) { todo!() }
+    fn switch_to_block(
+        &mut self,
+        _: <Self as rustc_codegen_ssa::traits::BackendTypes>::BasicBlock,
+    ) {
+        todo!()
+    }
 }
 
 impl<'a, 'll, 'tcx> StaticBuilderMethods for Builder<'a, 'll, 'tcx> {

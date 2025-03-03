@@ -4,15 +4,18 @@ use crate::debug_info::{self, compile_unit_metadata, CrateDebugContext};
 use crate::llvm::{self, BasicBlock, Type, Value};
 use crate::{target, LlvmMod};
 use nvvm::NvvmOption;
-use rustc_codegen_ssa::traits::{BackendTypes, BaseTypeCodegenMethods, MiscCodegenMethods, ConstCodegenMethods, TypeMembershipCodegenMethods};
 use rustc_codegen_ssa::traits::DerivedTypeCodegenMethods;
+use rustc_codegen_ssa::traits::{
+    BackendTypes, BaseTypeCodegenMethods, ConstCodegenMethods, MiscCodegenMethods,
+    TypeMembershipCodegenMethods,
+};
 use rustc_data_structures::base_n;
 use rustc_hash::FxHashMap;
 use rustc_middle::dep_graph::DepContext;
 use rustc_middle::ty::layout::{
     FnAbiError, FnAbiOf, FnAbiRequest, HasTyCtxt, LayoutError, TyAndLayout,
 };
-use rustc_middle::ty::layout::{FnAbiOfHelpers, LayoutOfHelpers, HasTypingEnv,};
+use rustc_middle::ty::layout::{FnAbiOfHelpers, HasTypingEnv, LayoutOfHelpers};
 use rustc_middle::ty::Ty;
 use rustc_middle::{bug, span_bug, ty};
 use rustc_middle::{
@@ -247,20 +250,33 @@ impl<'ll, 'tcx> MiscCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         );
     }
 
-    fn declare_c_main(&self, _fn_type: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Type) -> Option<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function> {
+    fn declare_c_main(
+        &self,
+        _fn_type: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Type,
+    ) -> Option<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function> {
         // no point for gpu kernels
         None
     }
 
-    fn apply_target_cpu_attr(&self, _llfn: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function) {
+    fn apply_target_cpu_attr(
+        &self,
+        _llfn: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function,
+    ) {
         // no point if we are running on the gpu ;)
     }
 
-    fn compiler_used_statics(&self) -> &RefCell<Vec<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value>> {
+    fn compiler_used_statics(
+        &self,
+    ) -> &RefCell<Vec<<CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value>>
+    {
         &self.compiler_used_statics
     }
 
-    fn set_frame_pointer_type(&self, _llfn: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function) {}
+    fn set_frame_pointer_type(
+        &self,
+        _llfn: <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Function,
+    ) {
+    }
 }
 
 impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
@@ -661,11 +677,12 @@ impl<'ll, 'tcx> CoverageInfoMethods<'tcx> for CodegenCx<'ll, 'tcx> {
         todo!()
     }
 
-    fn get_pgo_func_name_var(&self, _instance: Instance<'tcx>) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
+    fn get_pgo_func_name_var(
+        &self,
+        _instance: Instance<'tcx>,
+    ) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Value {
         todo!()
     }
 }
 
-impl<'ll, 'tcx> TypeMembershipCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-
-}
+impl<'ll, 'tcx> TypeMembershipCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {}
