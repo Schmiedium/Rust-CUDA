@@ -22,6 +22,20 @@ use crate::context::CodegenCx;
 use crate::int_replace::{get_transformed_type, transmute_llval};
 use crate::llvm::{self, *};
 use crate::ty::LayoutLlvmExt;
+use libc::c_uint;
+use rustc_codegen_ssa::mir::operand::OperandValue;
+use rustc_codegen_ssa::mir::place::PlaceRef;
+use rustc_codegen_ssa::traits::BaseTypeCodegenMethods;
+use rustc_codegen_ssa::{traits::*, MemFlags};
+use rustc_middle::bug;
+use rustc_middle::ty::layout::LayoutOf;
+pub use rustc_middle::ty::layout::{WIDE_PTR_ADDR, WIDE_PTR_EXTRA};
+use rustc_middle::ty::{Ty, TyCtxt, TyKind};
+pub use rustc_target::abi::call::*;
+use rustc_target::abi::call::{CastTarget, Reg, RegKind};
+use rustc_target::abi::{self, HasDataLayout, Primitive::Int};
+// pub use rustc_target::spec::abi::Abi;
+use tracing::trace;
 
 pub(crate) fn readjust_fn_abi<'tcx>(
     tcx: TyCtxt<'tcx>,
@@ -435,7 +449,7 @@ impl<'ll, 'tcx> FnAbiLlvmExt<'ll, 'tcx> for FnAbi<'tcx, Ty<'tcx>> {
                 } => {
                     assert!(!on_stack);
                     apply(attrs);
-                    apply(extra_attrs);
+                    apply(meta_attrs);
                 }
                 PassMode::Pair(a, b) => {
                     apply(a);

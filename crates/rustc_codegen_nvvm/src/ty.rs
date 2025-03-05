@@ -244,6 +244,26 @@ impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     fn val_ty(&self, v: &'ll Value) -> &'ll Type {
         unsafe { llvm::LLVMTypeOf(v) }
     }
+    
+    fn type_f16(&self) -> Self::Type {
+        todo!()
+    }
+    
+    fn type_f128(&self) -> Self::Type {
+        todo!()
+    }
+    
+    fn type_array(&self, ty: Self::Type, len: u64) -> Self::Type {
+        todo!()
+    }
+    
+    fn type_ptr(&self) -> Self::Type {
+        todo!()
+    }
+    
+    fn type_ptr_ext(&self, address_space: AddressSpace) -> Self::Type {
+        todo!()
+    }
 }
 
 impl<'ll, 'tcx> LayoutTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {

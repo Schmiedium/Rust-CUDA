@@ -84,6 +84,10 @@ impl<'tcx> HasTypingEnv<'tcx> for Builder<'_, '_, 'tcx> {
     fn typing_env(&self) -> ty::TypingEnv<'tcx> {
         self.cx.typing_env()
     }
+    
+    fn typing_env(&self) -> ty::TypingEnv<'tcx> {
+        todo!()
+    }
 }
 
 impl<'tcx> HasTargetSpec for Builder<'_, '_, 'tcx> {

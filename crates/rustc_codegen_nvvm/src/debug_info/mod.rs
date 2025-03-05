@@ -1,5 +1,6 @@
 use std::cell::OnceCell;
 use std::cell::RefCell;
+use std::collections::btree_set::Range;
 use std::ffi::CString;
 use std::iter;
 use std::ops::Range;
@@ -516,5 +517,14 @@ impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
                 align.bytes() as u32,
             )
         }
+    }
+    
+    fn create_vtable_debuginfo(
+        &self,
+        ty: Ty<'tcx>,
+        trait_ref: Option<ty::PolyExistentialTraitRef<'tcx>>,
+        vtable: Self::Value,
+    ) {
+        todo!()
     }
 }

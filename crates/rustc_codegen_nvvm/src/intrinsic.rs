@@ -591,6 +591,16 @@ impl<'a, 'll, 'tcx> IntrinsicCallBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx>
 
     fn va_end(&mut self, va_list: &'ll Value) -> &'ll Value {
         trace!("Generate va_end call `{:?}`", va_list);
-        self.call_intrinsic("llvm.va_end", &[va_list])
+        let intrinsic = self.cx().get_intrinsic("llvm.va_end");
+        self.call(self.type_i1(), intrinsic, &[va_list], None)
+    }
+    
+    fn type_checked_load(
+        &mut self,
+        llvtable: Self::Value,
+        vtable_byte_offset: u64,
+        typeid: Self::Metadata,
+    ) -> Self::Value {
+        todo!()
     }
 }
