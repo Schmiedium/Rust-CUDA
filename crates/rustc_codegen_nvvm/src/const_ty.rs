@@ -51,7 +51,8 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     }
 
     fn const_bool(&self, val: bool) -> &'ll Value {
-        self.const_uint(self.type_i1(), val as u64)
+        todo!()
+        // self.const_uint(self.type_i1(), val as u64)
     }
 
     fn const_i32(&self, i: i32) -> &'ll Value {
