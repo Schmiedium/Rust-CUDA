@@ -108,7 +108,7 @@ pub(crate) fn const_alloc_to_llvm<'ll>(
             // This `inspect` is okay since we have checked that it is not within a relocation, it
             // is within the bounds of the allocation, and it doesn't affect interpreter execution
             // (we inspect the result after interpreter execution).
-            append_chunks_of_init_and_uninit_bytes(&mut llvals, cx, alloc, next_offset..offset);
+            append_chunks_of_init_and_uninit_bytes(&mut llvals, cx, alloc.inner(), next_offset..offset);
         }
         let ptr_offset = read_target_uint(
             dl.endian,
@@ -132,12 +132,12 @@ pub(crate) fn const_alloc_to_llvm<'ll>(
         ));
         next_offset = offset + pointer_size;
     }
-    if alloc.len() >= next_offset {
-        let range = next_offset..alloc.len();
+    if alloc.inner().len() >= next_offset {
+        let range = next_offset..alloc.inner().len();
         // This `inspect` is okay since we have check that it is after all relocations, it is
         // within the bounds of the allocation, and it doesn't affect interpreter execution (we
         // inspect the result after interpreter execution).
-        append_chunks_of_init_and_uninit_bytes(&mut llvals, cx, alloc, range);
+        append_chunks_of_init_and_uninit_bytes(&mut llvals, cx, alloc.inner(), range);
     }
 
     cx.const_struct(&llvals, true)
@@ -192,8 +192,8 @@ fn check_and_apply_linkage<'ll, 'tcx>(
         // extern "C" fn() from being non-null, so we can't just declare a
         // static and call it a day. Some linkages (like weak) will make it such
         // that the static actually has a null value.
-        let llty2 = if let ty::RawPtr(ty2, _) = ty.kind() {
-            cx.layout_of(ty2.clone()).llvm_type(cx)
+        let llty2 = if let ty::RawPtr(ref mt, _) = ty.kind() {
+            cx.layout_of(*mt).llvm_type(cx)
         } else {
             cx.sess().dcx().span_fatal(
                 cx.tcx.def_span(span_def_id),

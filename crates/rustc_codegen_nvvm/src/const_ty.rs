@@ -51,7 +51,8 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     }
 
     fn const_bool(&self, val: bool) -> &'ll Value {
-        unsafe { llvm::LLVMInt1TypeInContext(self.llcx) }
+        todo!()
+        // unsafe { llvm::LLVMInt1TypeInContext(self.llcx) }
     }
 
     fn const_i32(&self, i: i32) -> &'ll Value {
