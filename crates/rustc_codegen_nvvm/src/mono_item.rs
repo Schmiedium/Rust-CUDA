@@ -11,6 +11,7 @@ use rustc_middle::mir::mono::{Linkage, Visibility};
 use rustc_middle::ty::TypeVisitableExt;
 use rustc_middle::ty::layout::{FnAbiOf, HasTypingEnv, LayoutOf};
 use rustc_middle::ty::{self, Instance};
+use rustc_span::Symbol;
 use tracing::trace;
 
 pub(crate) fn visibility_to_llvm(linkage: Visibility) -> llvm::Visibility {

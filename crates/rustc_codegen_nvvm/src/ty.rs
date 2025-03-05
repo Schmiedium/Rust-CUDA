@@ -138,6 +138,20 @@ impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
         self.type_from_integer(ity)
     }
 
+    pub(crate) fn type_ptr_to(&self, ty: &'ll Type) -> &'ll Type {
+        assert_ne!(
+            self.type_kind(ty),
+            TypeKind::Function,
+            "don't call ptr_to on function types, use ptr_to_llvm_type on FnAbi instead or explicitly specify an address space if it makes sense"
+        );
+
+        unsafe { llvm::LLVMPointerType(ty, AddressSpace::DATA.0) }
+    }
+
+    pub(crate) fn type_ptr_to_ext(&self, ty: &'ll Type, address_space: AddressSpace) -> &'ll Type {
+        unsafe { llvm::LLVMPointerType(ty, address_space.0) }
+    }
+
     /// Return a LLVM type that has at most the required alignment,
     /// and exactly the required size, as a best-effort padding array.
     pub(crate) fn type_padding_filler(&self, size: Size, align: Align) -> &'ll Type {
@@ -155,6 +169,11 @@ impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
     pub(crate) fn type_array(&self, ty: &'ll Type, len: u64) -> &'ll Type {
         unsafe { llvm::LLVMRustArrayType(ty, len) }
     }
+
+    pub(crate) fn type_i1(&self) -> &'ll Type {
+        unsafe { llvm::LLVMInt1TypeInContext(self.llcx) }
+    }
+
 }
 
 impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
