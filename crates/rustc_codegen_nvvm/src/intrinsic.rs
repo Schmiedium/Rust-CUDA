@@ -594,7 +594,7 @@ impl<'a, 'll, 'tcx> IntrinsicCallBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx>
         let intrinsic = self.cx().get_intrinsic("llvm.va_end");
         self.call(self.type_i1(), intrinsic, &[va_list], None)
     }
-    
+
     fn type_checked_load(
         &mut self,
         llvtable: Self::Value,

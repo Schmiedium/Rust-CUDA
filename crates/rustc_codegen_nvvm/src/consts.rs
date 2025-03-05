@@ -21,7 +21,6 @@ use rustc_middle::{
     span_bug,
 };
 use tracing::trace;
-use crate::{context::CodegenCx, ty::LayoutLlvmExt};
 
 pub(crate) fn bytes_in_context<'ll>(llcx: &'ll llvm::Context, bytes: &[u8]) -> &'ll Value {
     unsafe {

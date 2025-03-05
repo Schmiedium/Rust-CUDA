@@ -73,7 +73,7 @@ impl ThinBufferMethods for ThinBuffer {
             std::slice::from_raw_parts(ptr, len)
         }
     }
-    
+
     fn thin_link_data(&self) -> &[u8] {
         todo!()
     }

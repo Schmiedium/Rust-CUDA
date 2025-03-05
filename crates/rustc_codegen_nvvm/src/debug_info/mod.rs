@@ -518,7 +518,7 @@ impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
             )
         }
     }
-    
+
     fn create_vtable_debuginfo(
         &self,
         ty: Ty<'tcx>,
