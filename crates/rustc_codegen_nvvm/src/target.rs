@@ -51,5 +51,11 @@ pub fn target() -> Target {
             description: Some("NVIDIA CUDA".into()),
             ..Default::default()
         },
+        metadata: TargetMetadata {
+            description: todo!(),
+            tier: todo!(),
+            host_tools: todo!(),
+            std: todo!(),
+        },
     }
 }
