@@ -1,6 +1,5 @@
 use std::cell::OnceCell;
 use std::cell::RefCell;
-use std::collections::btree_set::Range;
 use std::ffi::CString;
 use std::iter;
 use std::ops::Range;
@@ -246,7 +245,7 @@ impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
             file_start_pos: BytePos(0),
             file_end_pos: BytePos(0),
         };
-        let mut fn_debug_context = FunctionDebugContext {
+        let mut fn_debug_context: FunctionDebugContext<'_, &llvm::Metadata, &llvm::Metadata> = FunctionDebugContext {
             scopes: IndexVec::from_elem(empty_scope, &mir.source_scopes),
             inlined_function_scopes: Default::default(),
         };
