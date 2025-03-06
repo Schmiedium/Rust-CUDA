@@ -173,7 +173,6 @@ impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
     pub(crate) fn type_i1(&self) -> &'ll Type {
         unsafe { llvm::LLVMInt1TypeInContext(self.llcx) }
     }
-
 }
 
 impl<'ll, 'tcx> BaseTypeCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {

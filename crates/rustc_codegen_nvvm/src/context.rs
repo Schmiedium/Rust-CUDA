@@ -647,7 +647,4 @@ impl<'ll, 'tcx> CoverageInfoBuilderMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     }
 }
 
-impl<'ll, 'tcx> TypeMembershipCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
-    
-}
-
+impl<'ll, 'tcx> TypeMembershipCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {}
