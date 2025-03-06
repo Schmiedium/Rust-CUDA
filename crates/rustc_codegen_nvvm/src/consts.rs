@@ -115,7 +115,7 @@ pub(crate) fn const_alloc_to_llvm<'ll>(
             // This `inspect` is okay since it is within the bounds of the allocation, it doesn't
             // affect interpreter execution (we inspect the result after interpreter execution),
             // and we properly interpret the relocation as a relocation pointer offset.
-            alloc.inspect_with_uninit_and_ptr_outside_interpreter(offset..(offset + pointer_size)),
+            alloc.inner().inspect_with_uninit_and_ptr_outside_interpreter(offset..(offset + pointer_size)),
         )
         .expect("const_alloc_to_llvm: could not read relocation pointer")
             as u64;

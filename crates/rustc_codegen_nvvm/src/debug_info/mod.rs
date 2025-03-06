@@ -520,9 +520,9 @@ impl<'ll, 'tcx> DebugInfoCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
 
     fn create_vtable_debuginfo(
         &self,
-        ty: Ty<'tcx>,
-        trait_ref: Option<ty::PolyExistentialTraitRef<'tcx>>,
-        vtable: Self::Value,
+        _ty: Ty<'tcx>,
+        _trait_ref: Option<ty::PolyExistentialTraitRef<'tcx>>,
+        _vtable: Self::Value,
     ) {
         todo!()
     }
