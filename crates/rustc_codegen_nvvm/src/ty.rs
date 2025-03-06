@@ -599,8 +599,8 @@ fn uncached_llvm_type<'a, 'tcx>(
             let packed = false;
             match name {
                 None => cx.type_struct(&[fill], packed),
-                Some(ref name) => {
-                    let llty = cx.type_named_struct(name);
+                Some(name) => {
+                    let llty = cx.type_named_struct(&name);
                     cx.set_struct_body(llty, &[fill], packed);
                     llty
                 }
@@ -612,8 +612,8 @@ fn uncached_llvm_type<'a, 'tcx>(
                 let (llfields, packed) = struct_llfields(cx, layout);
                 cx.type_struct(&llfields, packed)
             }
-            Some(ref name) => {
-                let llty = cx.type_named_struct(name);
+            Some(name) => {
+                let llty = cx.type_named_struct(&name);
                 *defer = Some((llty, layout));
                 llty
             }
