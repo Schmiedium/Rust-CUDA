@@ -597,9 +597,9 @@ impl<'a, 'll, 'tcx> IntrinsicCallBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx>
 
     fn type_checked_load(
         &mut self,
-        llvtable: Self::Value,
-        vtable_byte_offset: u64,
-        typeid: Self::Metadata,
+        _llvtable: Self::Value,
+        _vtable_byte_offset: u64,
+        _typeid: Self::Metadata,
     ) -> Self::Value {
         todo!()
     }
