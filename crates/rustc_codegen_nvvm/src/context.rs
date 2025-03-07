@@ -183,6 +183,14 @@ impl<'ll, 'tcx> CodegenCx<'ll, 'tcx> {
         self.fatal(format!("{} is unsupported", thing))
     }
 
+    pub fn type_i8p(&self) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Type {
+        self.type_ptr_to(self.type_i8())
+    }
+
+    pub fn type_i8p_ext(&self, address_space: AddressSpace) -> <CodegenCx<'ll, 'tcx> as rustc_codegen_ssa::traits::BackendTypes>::Type {
+        self.type_ptr_to_ext(self.type_i8(), address_space)
+    }
+
     pub(crate) fn create_used_variable_impl(&self, name: &'static CStr, values: &[&'ll Value]) {
         let section = c"llvm.metadata";
         let array = self.const_array(self.type_ptr_to(self.type_i8()), values);

@@ -1036,7 +1036,7 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
     ) -> (&'ll Value, &'ll Value) {
         // allowed but only for some things and with restrictions
         // https://docs.nvidia.com/cuda/nvvm-ir-spec/index.html#cmpxchg-instruction
-        self.fatal("atomic cmpxchg is not supported")
+        self.fatal("atomic cmpxchg is not supported".to_string())
     }
     fn atomic_rmw(
         &mut self,
@@ -1046,7 +1046,7 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         _order: rustc_codegen_ssa::common::AtomicOrdering,
     ) -> &'ll Value {
         // see cmpxchg comment
-        self.fatal("atomic rmw is not supported")
+        self.fatal("atomic rmw is not supported".to_string())
     }
 
     fn atomic_fence(
@@ -1054,7 +1054,7 @@ impl<'ll, 'tcx, 'a> BuilderMethods<'a, 'tcx> for Builder<'a, 'll, 'tcx> {
         _order: rustc_codegen_ssa::common::AtomicOrdering,
         _scope: rustc_codegen_ssa::common::SynchronizationScope,
     ) {
-        self.fatal("atomic fence is not supported, use cuda_std intrinsics instead")
+        self.fatal("atomic fence is not supported, use cuda_std intrinsics instead".to_string())
     }
 
     fn set_invariant_load(&mut self, load: &'ll Value) {

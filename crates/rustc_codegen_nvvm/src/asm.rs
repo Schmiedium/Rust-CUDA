@@ -138,14 +138,14 @@ impl<'a, 'll, 'tcx> AsmBuilderMethods<'tcx> for Builder<'a, 'll, 'tcx> {
                 } => {
                     match operands[operand_idx] {
                         InlineAsmOperandRef::In { .. }
-                        | InlineAsmOperandRef::Out { .. }
-                        | InlineAsmOperandRef::InOut { .. } => {
-                            template_str.push_str(&format!("${{{}}}", op_idx[&operand_idx]));
-                        }
+                                            | InlineAsmOperandRef::Out { .. }
+                                            | InlineAsmOperandRef::InOut { .. } => {
+                                                template_str.push_str(&format!("${{{}}}", op_idx[&operand_idx]));
+                                            }
                         InlineAsmOperandRef::Const { ref string } => {
-                            // Const operands get injected directly into the template
-                            template_str.push_str(string);
-                        }
+                                                // Const operands get injected directly into the template
+                                                template_str.push_str(string);
+                                            }
                         InlineAsmOperandRef::SymFn { .. }
                         | InlineAsmOperandRef::SymStatic { .. } => {
                             // Only emit the raw symbol name
