@@ -180,7 +180,6 @@ fn link_rlib(sess: &Session, codegen_results: &CodegenResults, out_filename: &Pa
                 "Adding native libraries to rlib is not supported in CUDA: {}",
                 lib.name
             ));
-        }
     }
     trace!("Files linked in rlib:\n{:#?}", file_list);
 
