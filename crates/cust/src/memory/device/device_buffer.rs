@@ -325,10 +325,12 @@ impl<A: DeviceCopy + Pod> DeviceBuffer<A> {
             Err(PodCastError::SizeMismatch)
         } else if (size_of::<A>() * self.len) % size_of::<B>() == 0 {
             let new_len = (size_of::<A>() * self.len) / size_of::<B>();
-            Ok(DeviceBuffer {
+            let ret = Ok(DeviceBuffer {
                 buf: self.buf.cast(),
                 len: new_len,
-            })
+            });
+            std::mem::forget(self);
+            ret
         } else {
             Err(PodCastError::OutputSliceWouldHaveSlop)
         }
