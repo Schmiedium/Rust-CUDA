@@ -24,7 +24,7 @@ jobs:
         include:
           # - os: ubuntu-20.04
           #   target: x86_64-unknown-linux-gnu
-          - os: windows-2022
+          - os: windows-latest
             target: x86_64-pc-windows-msvc
     steps:
       - name: Checkout repository
@@ -61,17 +61,13 @@ jobs:
       - name: Load Rust Cache
         uses: Swatinem/rust-cache@v1
 
-      - name: Windows Environment
-        if: contains(matrix.os, 'windows')
-        run: dir env:\
-
 
       - name: Rustfmt
         if: contains(matrix.os, 'ubuntu')
         run: cargo fmt --all -- --check
 
       - name: Build
-        run: cargo build --workspace --exclude "optix" --exclude "path_tracer*" --exclude "denoiser" --exclude "add" --exclude "ex*"
+        run: cargo build --workspace --exclude "optix" --exclude "path_tracer" --exclude "denoiser" --exclude "add" --exclude "ex*"
 
       # Don't currently test because many tests rely on the system having a CUDA GPU
       # - name: Test
