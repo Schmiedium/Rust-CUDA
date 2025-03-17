@@ -63,7 +63,8 @@ jobs:
 
       - name: Windows Environment
         if: contains(matrix.os, 'windows')
-        run: $env:INCLUDE=$INCLUDE;"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include";"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include";"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt";"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include";
+        run: $env:INCLUDE=$INCLUDE;"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\include";"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt";"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.43.34808\include";
+
 
       - name: Rustfmt
         if: contains(matrix.os, 'ubuntu')
