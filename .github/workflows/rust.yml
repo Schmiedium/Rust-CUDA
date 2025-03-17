@@ -63,7 +63,7 @@ jobs:
 
       - name: Windows Environment
         if: contains(matrix.os, 'windows')
-        run: $env:CUDA_PATH;
+        run: dir env:\
 
 
       - name: Rustfmt
