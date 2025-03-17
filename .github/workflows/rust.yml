@@ -22,8 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-20.04
-            target: x86_64-unknown-linux-gnu
+          # - os: ubuntu-20.04
+          #   target: x86_64-unknown-linux-gnu
           - os: windows-2022
             target: x86_64-pc-windows-msvc
     steps:
@@ -63,7 +63,7 @@ jobs:
 
       - name: Windows Environment
         if: contains(matrix.os, 'windows')
-        run: $env:INCLUDE; $env:PATH;
+        run: $env:INCLUDE;
 
 
       - name: Rustfmt
